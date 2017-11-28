@@ -1,0 +1,106 @@
+
+## LagBasis
+## -------------------------------------------------------------------
+#' @title Create and Manipulate Lag Basis Functions
+#'
+#' @description
+#' S4 class object to store and query components of
+#' lag basis functions. User interface for creating this class can be found in
+#' \code{\link{lag.basis}}.
+#'
+#'
+#' @slot x
+#'   original lag data
+#'
+#' @slot x.center
+#'   store the value the lag data was centered to. In theory
+#'   this is useful for the non-yet-implemented \code{predict} method
+#'
+#' @slot x.scale
+#'   store the value the lag data was scaled by. Again, should be
+#'   useful primarily for the \code{predict} method in the future
+#'
+#' @slot C0
+#'   C_0 part of basis matrix
+#'
+#' @slot K1
+#'   K_1 part of basis matrix
+#'
+#'
+#' @references Baek J, et al. (2016) Epidemiology 27(1):116-24.
+#' (\href{https://www.ncbi.nlm.nih.gov/pubmed/26414942}{PubMed})
+#'
+#' @name LagBasis
+#'
+LagBasis <- setClass("LagBasis",
+         slots = c(
+           x  = "numeric",
+           x.center = "numeric",
+           x.scale = "numeric",
+           C0 = "matrix",
+           K1 = "matrix"
+         ),
+         prototype = list(
+           x = NA_real_,
+           x.center = 0,
+           x.scale = 1,
+           C0 = matrix(),
+           K1 = matrix()
+         ))
+
+
+
+
+## SmoothLag
+## -------------------------------------------------------------------
+#' @title Lag Matrix With Applied Smoothing
+#'
+#' @description
+#' An S4 class object for representing a smoothed lag matrix in addition
+#' to containing details about the basis smoothing. Intended for use within
+#' \code{\link{dlm}} modeling framework to assist extraction of basis
+#' components treated as "fixed" and "random" effects. Inherits from
+#' \code{matrix}.
+#'
+#' @slot basis
+#'   A \code{\link{LagBasis}} smoothing object containing details about the
+#'   lag and the smoothing parameters used
+#'
+#' @slot .Data
+#'   Contains the "fixed effects" components of the smoothed lag function.
+#'   This scheme is intended to work conveniently with
+#'   \code{stats::model.matrix}
+#'
+#' @slot random
+#'   Contains the "random effects" components of the smoothed lag function
+#'
+#' @slot terms
+#'   Character vector contianing the function name and deparsed arguments
+#'   from whatever smoothing function generated the \code{SmoothLag} object
+#'
+#' @name SmoothLag
+#'
+SmoothLag <- setClass("SmoothLag",
+                       slots = c(
+                         basis = "LagBasis",
+                         random = "matrix",
+                         signature = "character"
+                       ),
+                       contains = "matrix"
+                       )
+
+
+
+
+
+dlMod <- setClass("dlMod",
+                  slots = c(
+                    resp = "lmResp",
+                    bases = "list",
+                    index = "list"
+                  ),
+                  contains = "merMod"
+                  )
+
+## ldlMod <- setClass("ldlMod", contains = "dlMod")
+## gdlMod <- setClass("gdlMod", contains = "dlMod")

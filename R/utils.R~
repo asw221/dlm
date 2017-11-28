@@ -1,0 +1,65 @@
+
+## Exported Misc Utility Functions for builtenvir Package
+## -------------------------------------------------------------------
+
+#' Block Vectors
+#'
+#' Build a block vector of length equal to \code{index}; fill the result
+#' with elements from \code{data} at positions in \code{index}.
+#'
+#' @param index an integer vector of positions to fill with data
+#' @param data a numeric vector of data to expand to fill the result
+#'
+#' @return a blocked numeric vector
+#'
+#' @examples
+#' ndx <- rep(1:3, 3:1)
+#' x <- runif(3)
+#'
+#' all.equal(bvec(ndx, x), x[ndx])
+#'
+bvec <- function(index, data) {
+  .Call("makeBlockVec", as.integer(index) - 1, data, PACKAGE = "builtenvir")
+}
+
+
+
+
+
+
+## Non-Exported Misc Utility Functions for builtenvir Package
+## -------------------------------------------------------------------
+
+
+## Throw error for argument of unrecognized type
+
+.Unrecognized <- function(name, class, .n = 1) {
+  caller.name <- as.character(sys.call(.n))[1]
+  stop (caller.name, ": Unrecognized type for '",
+        name, "': ", paste(class, collapse = ", "),
+        call. = FALSE
+        )
+}
+
+
+
+
+## simple utility to capitalize first letters in argument string
+## can set .fun = gsub to capitalize all letters
+
+capitalize <- function(string, .fun = sub)
+  .fun("([A-z])", "\\U\\1", string, perl = TRUE)
+
+
+
+## compute empirical Pr(x > reference) or Pr(|x| > |reference|)
+## from a vector of data, x. Take half influence of ties.
+
+sims.pval <- function(x, ref = 0, two.sided = TRUE, eps = 1 / length(x)) {
+  x <- x - ref
+  mu <- mean(x)
+  p <- 1 - (sum(x * sign(mu) > 0) + sum(x == 0) / 2) / length(x)
+  if (two.sided)
+    p <- 2 * p
+  max(min(p, 1 - eps), eps)
+}

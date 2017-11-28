@@ -1,0 +1,14 @@
+
+import (methods, lme4, Matrix)
+
+export (cr, dlm, lme4.dlm, interpret.dlm, basis,
+        makeDlMod, makeDlMod.merMod,
+        is.LagBasis, is.SmoothLag, is.dlMod,
+        coef.dlMod, summary.dlMod, confint.dlMod
+  )
+
+exportClasses (dlMod, LagBasis, SmoothLag)
+
+exportMethods ("[", "reIndex", "vcoef", "omega", "se.ranef", "se.fixef",
+               "scaleMat", "changePoint", "Sigma", "cholfVar"
+  )

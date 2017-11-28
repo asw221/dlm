@@ -1,0 +1,13 @@
+Package: dlm
+Version: 0.1
+Date: 2017-12-1
+title: Distributed Lag Models
+Description: Functions to fit spline models to lag/distance data
+Author: Andrew Whiteman <awhitem@umich.edu>,
+	Jonggyu Baek <jongguri@umich.edu>,
+	Brisa Sanchez <brisa@umich.edu>
+Maintainer: Andrew Whiteman <awhitem@umich.edu>
+License: GPL (>= 2)
+Depends: R (>= 3.0.2),
+	 lme4 (>= 1.1)
+	 methods

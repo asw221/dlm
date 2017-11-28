@@ -1,0 +1,13 @@
+
+# Ignore the build and lib dirs/subdirs
+build
+lib/*
+
+# Ignore any executables
+bin/*
+
+# Ignore emacs temporaries
+*~
+
+# Mac specific
+.DS_Store
