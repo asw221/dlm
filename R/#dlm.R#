@@ -157,7 +157,7 @@ lme4.dlm <- function(parsed, family = gaussian(),
   }
   pf$reTrms <- within(pf$reTrms, {
     ## Bt <- t(parsed$B)
-    cnms <- as.list(names(parsed$index$smooth))
+    ## cnms <- as.list(names(parsed$index$smooth))
     ## Zt <- as(Bt, class(Zt))
     Zt[(nrow(Zt) - nrow(parsed$Bt) + 1):nrow(Zt), ] <- parsed$Bt
   })
