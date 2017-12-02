@@ -6,9 +6,8 @@ lib/*
 # Ignore any executables
 bin/*
 
-# Ignore temporaries
-./*~
-./*/*~
+# Ignore temporary dir
+tmp
 
 
 # Mac specific
