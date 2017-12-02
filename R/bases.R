@@ -72,7 +72,9 @@ basis <- function(x, center = TRUE, scale = FALSE, ...,
 cr <- function(x, Z, ...) {
   if (any(is.na(x)) || any(is.na(Z)))
     stop ("missing values not allowed")
-  if (length(x) != ncol(Z <- as.matrix(Z)))
+  if (is.data.frame(Z))
+    Z <- as.matrix(Z)
+  if (length(x) != NCOL(Z))
     stop ("arguments do not have compatible dimensions")
   B <- basis(x, ...)
   SmoothLag(Z %*% B@C0, random = Z %*% B@K1,

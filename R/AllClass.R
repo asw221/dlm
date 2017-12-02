@@ -97,7 +97,7 @@ dlMod <- setClass("dlMod",
                   slots = c(
                     resp = "lmResp",
                     bases = "list",
-                    index = "list"
+                    index = "numeric"
                   ),
                   contains = "merMod"
                   )

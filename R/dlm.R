@@ -114,6 +114,7 @@ dlm <- function(formula, data, subset, na.action, weights, offset,
     stop ("Unrecognized method, ", method)
   makeDlMod(fit, parsed, match.call())
 }
+## dlm
 
 
 
@@ -155,47 +156,49 @@ lme4.dlm <- function(parsed, family = gaussian(),
     .Deviance <- lme4::mkGlmerDevfun
     .Optimize <- lme4::optimizeGlmer
   }
+  lnms <- attr(parsed$lag.group, "dictionary")
+  m <- match(names(lnms), names(pf$reTrms$cnms))
   pf$reTrms <- within(pf$reTrms, {
-    ## Bt <- t(parsed$B)
-    cnms <- as.list(names(parsed$index$smooth))
-    ## Zt <- as(Bt, class(Zt))
-    Zt[(nrow(Zt) - nrow(parsed$Bt) + 1):nrow(Zt), ] <- parsed$Bt
+    for (i in seq_along(lnms)) {
+      Zt[(Gp[i]+1):Gp[i+1], ] <- parsed$Bt[parsed$lag.group[lnms[m[i]]], ]
+      names (cnms)[i] <- lnms[m[i]]
+    }
   })
   devfun <- do.call(.Deviance, pf)
   optim <- .Optimize(devfun)
   fit <- lme4::mkMerMod(rho = environment(devfun),
                   opt = optim, reTrms = pf$reTrms, fr = pf$fr
                   )
-  nms <- fit@cnms
-  noNms <- if (is.null(names(nms))) !logical(length(nms)) else !nchar(names(nms))
-  names (nms)[noNms] <- unlist(lapply(nms[noNms], "[", 1))
-  fit@cnms <- nms
+  ## nms <- fit@cnms
+  ## noNms <- if (is.null(names(nms))) !logical(length(nms)) else !nchar(names(nms))
+  ## names (nms)[noNms] <- unlist(lapply(nms[noNms], "[", 1))
+  ## fit@cnms <- nms
   ## names (fit@flist) <- names(parsed$index$smooth)
+  names (fit@flist) <- names(fit@cnms)
   return (fit)
 }
+## lme4.dlm
 
 
 
 
 
-makeDlMod.merMod <- function(object, pdata, call, ...) {
+makeDlMod.merMod <- function(object, parsed, call, ...) {
   if (!(lme4::isLMM(object) || lme4::isGLMM(object)))
     stop ("Not yet implemented for ", class(object), " objects")
-  if (!inherits(pdata, "parsed.dlm")) .Unrecognized("pdata", class(pdata))
+  if (!inherits(parsed, "parsed.dlm")) .Unrecognized("parsed", class(parsed))
   if (missing(call)) call <- object@call
   else if (!is.call(call)) .Unrecognized("call", class(call))
-  ## frame <- pdata$model
-  ## attr (frame, "terms") <- pdata$terms
-  attr (object@frame, "lme4.formula") <- pdata$lme4.formula
-  index <- pdata$index
-  attr (index, "bi") <- pdata$bi
-  ## fam <- lme4::getME(object, "family")
-  obj <- dlMod(object, bases = pdata$bases, index = index, ...)
+  attr (object@frame, "lme4.formula") <- parsed$lme4.formula
+  index <- parsed$bi
+  names (index) <- attr(parsed$lag.group, "dictionary")
+  attr (index, "bi") <- parsed$bi
+  obj <- dlMod(object, bases = parsed$bases, index = index, ...)
   obj@call <- call
   obj@resp <- object@resp
-  ## obj@frame <- frame
   obj
 }
+## makeDlMod.merMod
 
 
 

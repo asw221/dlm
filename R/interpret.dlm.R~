@@ -21,7 +21,7 @@
 #' A \code{list} object...
 #'
 
-interpret.dlm <- function(formula, data,   ## random,
+._interpret.dlm <- function(formula, data,   ## random,
   .names.func = function(n) paste("pseudoGroups", n, sep = "")
 ) {
   fake.formula <- Reduce(paste, deparse(formula))

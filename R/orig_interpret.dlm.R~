@@ -21,7 +21,7 @@
 #' A \code{list} object...
 #'
 
-.interpret.dlm <- function(formula, data,   ## random,
+._interpret.dlm <- function(formula, data,   ## random,
   .names.func = function(n) paste("pseudoGroups", n, sep = "")
 ) {
   fake.formula <- Reduce(paste, deparse(formula))
@@ -63,8 +63,8 @@
   X <- model.matrix(mt, data)
   Z <- model.matrix(mt.tmp, mf.lag)[, -1]
   P <- ncol(X)
-  nms <- c(colnames(Z), colnames(X))
-  ## nms <- c(colnames(X), colnames(Z))
+  ## nms <- c(colnames(Z), colnames(X))
+  nms <- c(colnames(X), colnames(Z))
   rm (X)
 
   grp <- parse.names(lag.nms, nms)  ## 0 for non-lag covariates
@@ -76,8 +76,7 @@
       index$covariates <- which(grp == j)
     else {
       index$smooth[[j]] <- which(grp == j)
-      ## k <- sum(index$smooth[[j]] > P)
-      k <- sum(index$smooth[[j]] <= length(nms) - P)
+      k <- sum(index$smooth[[j]] > P)
       pn <- .names.func(j)
       data[[pn]] <- factor(rep(1:k, length.out = nrow(data)))
       fake.formula <- paste0(fake.formula, " + (1 | ", pn, ")")
