@@ -92,6 +92,8 @@ SmoothLag <- setClass("SmoothLag",
 
 
 
+## dlMod
+## -------------------------------------------------------------------
 
 dlMod <- setClass("dlMod",
                   slots = c(
@@ -104,3 +106,6 @@ dlMod <- setClass("dlMod",
 
 ## ldlMod <- setClass("ldlMod", contains = "dlMod")
 ## gdlMod <- setClass("gdlMod", contains = "dlMod")
+
+
+

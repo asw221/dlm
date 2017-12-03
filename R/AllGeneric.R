@@ -26,6 +26,10 @@ setGeneric("cholfVar", function(object, ...) standardGeneric("cholfVar"))
 setGeneric("vcoef", function(object, ...) standardGeneric("vcoef"))
 
 
+## Extract list of indices of lag terms
+setGeneric("lagIndex", function(object, ...) standardGeneric("lagIndex"))
+
+
 
 #' @title Extract Lag Basis Matrix
 #'

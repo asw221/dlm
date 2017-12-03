@@ -3,9 +3,11 @@
 
 
 setMethod("vcoef", signature = "dlMod",
-          function(object, ...) {
-            b <- unlist(lapply(lme4::ranef(object), t))
-            unname(c(lme4::fixef(object), b))
+          function(object, scaled = TRUE, ...) {
+            z <- c(lme4::getME(object, "beta"),
+                   as.matrix(lme4::getME(object, "b"))
+                   )
+            if (scaled) c(as.matrix(scaleMat(object) %*% z)) else z
           })
 
 
