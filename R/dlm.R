@@ -189,7 +189,7 @@ makeDlMod.merMod <- function(object, parsed, call, ...) {
   if (!inherits(parsed, "parsed.dlm")) .Unrecognized("parsed", class(parsed))
   if (missing(call)) call <- object@call
   else if (!is.call(call)) .Unrecognized("call", class(call))
-  attr (object@frame, "lme4.formula") <- parsed$lme4.formula
+  ## attr (object@frame, "lme4.formula") <- parsed$lme4.formula
   index <- parsed$bi
   names (index) <- attr(parsed$lag.group, "dictionary")
   ## attr (index, "bi") <- parsed$bi

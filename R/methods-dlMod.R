@@ -4,8 +4,8 @@
 
 setMethod("vcoef", signature = "dlMod",
           function(object, ...) {
-            ## c(unlist(lme4::ranef(object)), lme4::fixef(object))
-            c(lme4::fixef(object), unlist(lme4::ranef(object)))
+            b <- unlist(lapply(lme4::ranef(object), t))
+            unname(c(lme4::fixef(object), b))
           })
 
 
@@ -14,10 +14,9 @@ setMethod("scaleMat", signature = "dlMod",
           function(object, ...) {
             pq <- unlist(lme4::getME(object, c("p", "q")))
             S <- Matrix::Diagonal(sum(pq))
-            ndx <- object@index$smooth
-            bi <- attr(object@index, "bi")
+            ndx <- lagIndex(object)
             for (i in 1:length(ndx))
-              S[ndx[[i]], ndx[[i]]] <- omega(object@bases[[bi[i]]])
+              S[ndx[[i]], ndx[[i]]] <- omega(object@bases[[object@index[i]]])
             S
           })
 
@@ -52,12 +51,36 @@ setMethod("changePoint", "dlMod",
           function(object, ...) {
             ci <- confint(object, ...)
             non0 <- !(ci[, 1] <= 0 & ci[, ncol(ci)] >= 0)
-            lapply(object@index$smooth,
+            lapply(lagIndex(object),
                    function(i) {
                      x <- non0[i]
                      which(x & !c(tail(x, -1), TRUE) & c(FALSE, head(x, -1)))
                    })
           })
+
+
+
+
+setMethod("lagIndex", "dlMod",
+          function(object, .fixed = TRUE, ...) {
+            .ind <- function(obj, name) {
+              i <- which(names(obj@cnms) == name)
+              (obj@Gp[i] + 1):obj@Gp[i + 1] + lme4::getME(obj, "p")
+            }
+            lnms <- names (object@index)
+            ndx <- lapply(lnms, function(nm) .ind(object, nm))
+            names (ndx) <- lnms
+            if (.fixed) {
+              formula <- lme4::nobars(attr(object@frame, "formula"))
+              fe.nms <- colnames(model.matrix(formula, head(object@frame, 1)))
+              grp <- parse.names(lnms, fe.nms, .warn = FALSE)
+              for (nm in lnms)
+                ndx[[nm]] <- c(grp[nm], ndx[[nm]])
+            }
+            ndx
+          })
+
+
 
 
 
