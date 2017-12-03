@@ -1,5 +1,11 @@
 
 
+
+## basis function extensions should be of class "SmoothLag"
+
+
+
+
 basis <- function(x, center = TRUE, scale = FALSE, ...,
                   .fun = function(x, ...) abs(outer(x, x, "-"))^3
                   ) {
@@ -67,16 +73,16 @@ basis <- function(x, center = TRUE, scale = FALSE, ...,
 #' @return
 #' An S4 object of class \code{\link{SmoothBasis}}.
 #'
-## basis function extensions should be of class "SmoothLag"
 
 cr <- function(x, Z, ...) {
   if (any(is.na(x)) || any(is.na(Z)))
     stop ("missing values not allowed")
-  if (is.data.frame(Z))
-    Z <- as.matrix(Z)
+  if (is.data.frame(Z))  Z <- as.matrix(Z)
   if (length(x) != NCOL(Z))
     stop ("arguments do not have compatible dimensions")
   B <- basis(x, ...)
+  ## The S4 constructor will automatically recast Matrix::dMatrix
+  ## type objects here (or similar)
   SmoothLag(Z %*% B@C0, random = Z %*% B@K1,
             basis = B,
             signature = deparse(sys.call())

@@ -16,8 +16,7 @@
 
 
 
-## Exported misc utility functions
-## -------------------------------------------------------------------
+
 
 ## Find and create index for unique names that have components
 ## matching base. The main idea here is that we want
@@ -25,7 +24,7 @@
 ## than cr(lag, X):factor(group)2, and so on
 ##
 parse.names <- function(base, names, .warn = TRUE) {
-  regex <- sprintf(":?\\b?\\Q%s\\E[0-9.]*\\b?:?", base)
+  regex <- sprintf("\\b?:?\\Q%s\\E[0-9.]*:?\\b?", base)
   base.index <- apply(sapply(regex, grepl, names), 1, which)
   if (is.list(base.index)) {
     base.index <- vapply(base.index, function(x) ifelse(length(x), x, NA),

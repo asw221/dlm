@@ -192,7 +192,7 @@ makeDlMod.merMod <- function(object, parsed, call, ...) {
   attr (object@frame, "lme4.formula") <- parsed$lme4.formula
   index <- parsed$bi
   names (index) <- attr(parsed$lag.group, "dictionary")
-  attr (index, "bi") <- parsed$bi
+  ## attr (index, "bi") <- parsed$bi
   obj <- dlMod(object, bases = parsed$bases, index = index, ...)
   obj@call <- call
   obj@resp <- object@resp

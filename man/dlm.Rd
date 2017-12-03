@@ -5,8 +5,7 @@
 \title{Distributed Lag Models}
 \usage{
 dlm(formula, data, subset, na.action, weights, offset, method = c("REML",
-  "MLE", "reml", "mle"), family = gaussian(), control = list(),
-  random = list(), ...)
+  "MLE", "reml", "mle"), family = gaussian(), control = list(), ...)
 }
 \arguments{
 \item{formula}{an object of class \code{"\link[stats]{formula}"}:

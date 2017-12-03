@@ -4,9 +4,9 @@
 \name{builtenvir}
 \alias{builtenvir}
 \alias{builtenvir-package}
-\title{dlm: Package Documentation}
+\title{dlm: Distributed lag models in R using lme4}
 \description{
-dlm: Package Documentation
+dlm: Distributed lag models in R using lme4
 }
 \references{
 Baek J, et al. (2016) Epidemiology 27(1):116-24.
