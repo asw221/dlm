@@ -24,6 +24,7 @@ setGeneric("cholfVar", function(object, ...) standardGeneric("cholfVar"))
 
 ## Extract [ranef, fixef] coefficient vector
 setGeneric("vcoef", function(object, ...) standardGeneric("vcoef"))
+setGeneric("vcoef0", function(object, ...) standardGeneric("vcoef0"))
 
 
 ## Extract list of indices of lag terms

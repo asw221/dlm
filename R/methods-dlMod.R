@@ -2,12 +2,35 @@
 
 
 
-setMethod("vcoef", signature = "dlMod",
+setMethod("vcoef0", signature = "dlMod",
           function(object, scaled = TRUE, ...) {
             z <- c(lme4::getME(object, "beta"),
                    as.matrix(lme4::getME(object, "b"))
                    )
             if (scaled) c(as.matrix(scaleMat(object) %*% z)) else z
+          })
+
+setMethod("vcoef", signature = "dlMod",
+          function(object, scaled = TRUE, ...) {
+            z <- vcoef0(object, scaled = scaled)
+            p <- lme4::getME(object, "p")
+            ng <- diff(object@Gp)
+            nms <- character(length(z))
+            nms[1:p] <- colnames(lme4::getME(object, "X"))
+            for (i in seq_along(object@cnms)) {
+              nm <- names(object@cnms)[i]
+              if (nm %in% names(object@index)) {
+                x <- tail(object@bases[[object@index[nm]]]@x, ng[i])
+                new.nms <- paste(nm, x, sep = "")
+              }
+              else {
+                ## may not work for factors with missing levels
+                new.nms <- paste(nm, levels(object@flist[[i]]), sep = "")
+                new.nms <- sapply(new.nms, paste, object@cnms[[i]], sep = ".")
+              }
+              nms[(object@Gp[i] + 1):object@Gp[i + 1] + p] <- new.nms
+            }
+            structure(z, names = nms)
           })
 
 
@@ -73,8 +96,7 @@ setMethod("lagIndex", "dlMod",
             ndx <- lapply(lnms, function(nm) .ind(object, nm))
             names (ndx) <- lnms
             if (.fixed) {
-              formula <- lme4::nobars(attr(object@frame, "formula"))
-              fe.nms <- colnames(model.matrix(formula, head(object@frame, 1)))
+              fe.nms <- colnames(lme4::getME(object, "X"))
               grp <- parse.names(lnms, fe.nms, .warn = FALSE)
               for (nm in lnms)
                 ndx[[nm]] <- c(grp[nm], ndx[[nm]])
@@ -86,26 +108,41 @@ setMethod("lagIndex", "dlMod",
 
 
 
-coef.dlMod <- function(object, ...) {
+coef.dlMod <- function(object, scaled = TRUE, ...) {
+  z <- vcoef(object, scaled = scaled)
+
+  fef <- t(fixef(object))
+  ref <- ranef(object)
+  li <- lagIndex(object)
+  is.lag <- names(ref) %in% names(object@index)
+  for (i in seq_along(is.lag)) {
+    if (islag[i]) {
+      refi <- data.frame(rep(1, nrow(ref[[i]])) %*% fef, check.names = FALSE)
+      for (nm in names(ref[[i]]))
+        refi[[nm]] <- if (is.null(refi[[nm]])) ref[, nm]
+                      else refi[[nm]] + ref[, nm]
+      ref[[i]] <- refi
+    }
+    else {
+    }
+  }
   c(as.matrix(scaleMat(object) %*% vcoef(object)))
 }
 
 
 
-confint.dlMod <- function(object, parm, level = 0.95, ...) {
+confint.dlMod <- function(object, parm, level = 0.95, scaled = TRUE, ...) {
+  .Ignored(...)
   if (any(level >= 1 | level <= 0))  stop ("level out of bounds")
-  b <- coef(object)
+  b <- vcoef(object, scaled = scaled)
   a <- (1 - level) / 2
   a <- sort(c(a, 1 - a))
   q <- qnorm(a)
-  se <- sqrt(diag(Sigma(object)))
+  se <- sqrt(diag(Sigma(object, scaled = scaled)))
   ci <- b + se %o% q
   colnames (ci) <- sprintf("%.1f%%", a * 100)
   rownames (ci) <- names(b)
-  if (!missing(parm))
-    ci[parm, ]
-  else
-    ci
+  if (!missing(parm)) ci[parm, ] else ci
 }
 
 

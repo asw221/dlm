@@ -14,5 +14,5 @@ exportClasses (dlMod, LagBasis, SmoothLag)
 
 exportMethods ("[", "reIndex", "vcoef", "omega", "se.ranef", "se.fixef",
                "scaleMat", "changePoint", "Sigma", "cholfVar",
-               "lagIndex"
+               "lagIndex", "vcoef0"
   )

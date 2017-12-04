@@ -1,21 +1,5 @@
 
 
-## Non-Exported Misc Utility Functions for builtenvir Package
-## -------------------------------------------------------------------
-
-
-## Throw error for argument of unrecognized type
-.Unrecognized <- function(name, class, .n = 1) {
-  caller.name <- as.character(sys.call(.n))[1]
-  stop (caller.name, ": Unrecognized type for '",
-        name, "': ", paste(class, collapse = ", "),
-        call. = FALSE
-        )
-}
-## .Unrecognized
-
-
-
 ## Exported misc utility functions
 ## -------------------------------------------------------------------
 
@@ -55,8 +39,36 @@ parse.names <- function(base, names, .warn = TRUE) {
 ## [.pnames
 
 
-## new.nms <- paste(ifelse(!is.na(base.index), base[base.index], ""),
-##                  other, sep = ":")
-##
-## new.nms[is.na(base.index)] <- other[is.na(base.index)]
+
+
+
+
+
+## Non-Exported misc utility functions
+## -------------------------------------------------------------------
+
+## Throw error for argument of unrecognized type
+.Unrecognized <- function(name, class, .n = 1) {
+  caller.name <- as.character(sys.call(.n))[1]
+  stop (caller.name, ": Unrecognized type for '",
+        name, "': ", paste(class, collapse = ", "),
+        call. = FALSE
+        )
+}
+## .Unrecognized
+
+
+## Warn if arguments dropped
+.Ignored <- function(..., call. = FALSE, immediate. = FALSE,
+                     noBreaks. = FALSE, domain = NULL
+                     ) {
+  l... <- list(...)
+  if (length(l...))
+    warning ('Arguments, "', paste(names(l...), collapse = ", "), '" ignored',
+             call. = call., immediate. = immediate., noBreaks. = noBreaks.,
+             domain = domain
+             )
+}
+
+
 

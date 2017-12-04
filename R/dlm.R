@@ -126,6 +126,7 @@ lme4.dlm <- function(parsed, family = gaussian(),
 ) {
   if (!inherits(parsed, "parsed.dlm")) .Unrecognized("parsed", class(parsed))
   linear <- (family$family == "gaussian" && family$link == "identity")
+
   if (!inherits(control, "merControl")) {
     if (is.list(control)) {
       control <- if (linear) do.call(lme4::lmerControl, control)
@@ -134,11 +135,14 @@ lme4.dlm <- function(parsed, family = gaussian(),
     else
       .Unrecognized("control", class(control))
   }
+
   ## reassign environment for formula so [g]lFormula knows where
-  ## to look for parsed in calls to eval()
+  ## to look for variable parsed in calls to eval()
   ##   -- may be a better way to do this!
   formula <- parsed$lme4.formula
   environment (formula) <- sys.frame(sys.nframe())
+
+  ## Figure out the correct lme4 modular functions to fit the model
   if (linear) {
     ## weights and offset are NULL values if missing and are handled
     ## correctly in any case
@@ -151,7 +155,7 @@ lme4.dlm <- function(parsed, family = gaussian(),
     .Deviance <- lme4::mkLmerDevfun
     .Optimize <- lme4::optimizeLmer
   }
-  else {
+  else {  # glFormula needs a 'family' argument; all else the same
     pf <- lme4::glFormula(formula, data = parsed$model,
                    control = control, family = family,
                    weights = parsed$model[["(weights)"]],
@@ -161,6 +165,9 @@ lme4.dlm <- function(parsed, family = gaussian(),
     .Deviance <- lme4::mkGlmerDevfun
     .Optimize <- lme4::optimizeGlmer
   }
+
+  ## Replace iid dummy variables corresponding to penalized lag terms
+  ## in RE design matrix with the actual lag term data
   lnms <- attr(parsed$lag.group, "dictionary")
   m <- match(names(lnms), names(pf$reTrms$cnms))
   pf$reTrms <- within(pf$reTrms, {
@@ -174,13 +181,9 @@ lme4.dlm <- function(parsed, family = gaussian(),
   fit <- lme4::mkMerMod(rho = environment(devfun),
                   opt = optim, reTrms = pf$reTrms, fr = pf$fr
                   )
-  ## nms <- fit@cnms
-  ## noNms <- if (is.null(names(nms))) !logical(length(nms)) else !nchar(names(nms))
-  ## names (nms)[noNms] <- unlist(lapply(nms[noNms], "[", 1))
-  ## fit@cnms <- nms
-  ## names (fit@flist) <- names(parsed$index$smooth)
   names (fit@flist) <- names(fit@cnms)
-  return (fit)
+  attr(fit@frame, "formula") <- parsed$lme4.formula
+  fit
 }
 ## lme4.dlm
 
@@ -194,10 +197,8 @@ makeDlMod.merMod <- function(object, parsed, call, ...) {
   if (!inherits(parsed, "parsed.dlm")) .Unrecognized("parsed", class(parsed))
   if (missing(call)) call <- object@call
   else if (!is.call(call)) .Unrecognized("call", class(call))
-  attr (object@frame, "formula") <- parsed$lme4.formula
   index <- parsed$bi
   names (index) <- attr(parsed$lag.group, "dictionary")
-  ## attr (index, "bi") <- parsed$bi
   obj <- dlMod(object, bases = parsed$bases, index = index, ...)
   obj@call <- call
   obj@resp <- object@resp
