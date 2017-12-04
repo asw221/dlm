@@ -22,7 +22,7 @@ plot.dlMod <- function(x, y, geom = c("pointrange", "line"),
 
 
 qqnorm.dlMod <- function(y, ...) {
-  r <- residuals(y) / sigma(y)
+  r <- residuals(y, "pearson", scaled = TRUE)
   df <- data.frame(x = qnorm(ppoints(length(r))), y = sort(r))
   ggplot(df, aes(x = x)) +
     geom_point(aes(y = y), ...) +

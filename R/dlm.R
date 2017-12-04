@@ -103,9 +103,6 @@ dlm <- function(formula, data, subset, na.action, weights, offset,
   rm (mf, m)
 
   method <- tolower(match.arg(method))
-  if (is.function(family))
-    family <- family()
-
   if (method == "reml" || method == "mle") {
     reml <- method == "reml"
     fit <- lme4.dlm(parsed, family, control, REML = reml, ...)
@@ -125,6 +122,8 @@ lme4.dlm <- function(parsed, family = gaussian(),
                      ...
 ) {
   if (!inherits(parsed, "parsed.dlm")) .Unrecognized("parsed", class(parsed))
+  if (is.function(family))
+    family <- family()
   linear <- (family$family == "gaussian" && family$link == "identity")
 
   if (!inherits(control, "merControl")) {
