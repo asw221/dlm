@@ -10,9 +10,9 @@ Maintainer: Andrew Whiteman <awhitem@umich.edu>
 License: GPL (>= 2)
 Depends: R (>= 3.0.2),
 	 lme4 (>= 1.1),
+	 ggplot2,
 	 methods
 LinkingTo:
 Imports: Matrix
-Suggests: ggplot2,
-	  devtools
+Suggests: devtools
 RoxygenNote: 6.0.1

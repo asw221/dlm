@@ -116,7 +116,7 @@ coef.dlMod <- function(object, scaled = TRUE, ...) {
   li <- lagIndex(object)
   is.lag <- names(ref) %in% names(object@index)
   for (i in seq_along(is.lag)) {
-    if (islag[i]) {
+    if (is.lag[i]) {
       refi <- data.frame(rep(1, nrow(ref[[i]])) %*% fef, check.names = FALSE)
       for (nm in names(ref[[i]]))
         refi[[nm]] <- if (is.null(refi[[nm]])) ref[, nm]
@@ -126,12 +126,13 @@ coef.dlMod <- function(object, scaled = TRUE, ...) {
     else {
     }
   }
-  c(as.matrix(scaleMat(object) %*% vcoef(object)))
+  invisible (0)
 }
 
 
 
-confint.dlMod <- function(object, parm, level = 0.95, scaled = TRUE, ...) {
+confint.dlMod <- function(object, parm, level = 0.95, scaled = TRUE,
+                          coef = TRUE, ...) {
   .Ignored(...)
   if (any(level >= 1 | level <= 0))  stop ("level out of bounds")
   b <- vcoef(object, scaled = scaled)
@@ -142,6 +143,8 @@ confint.dlMod <- function(object, parm, level = 0.95, scaled = TRUE, ...) {
   ci <- b + se %o% q
   colnames (ci) <- sprintf("%.1f%%", a * 100)
   rownames (ci) <- names(b)
+  if (coef)
+    ci <- cbind(coef = b, ci)
   if (!missing(parm)) ci[parm, ] else ci
 }
 
