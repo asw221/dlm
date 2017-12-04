@@ -152,7 +152,7 @@ lme4.dlm <- function(parsed, family = gaussian(),
     .Optimize <- lme4::optimizeLmer
   }
   else {
-    pf <- lme4::glFormula(parsed$lme4.formula, data = parsed$model,
+    pf <- lme4::glFormula(formula, data = parsed$model,
                    control = control, family = family,
                    weights = parsed$model[["(weights)"]],
                    offset = parsed$model[["(offset)"]],
