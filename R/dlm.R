@@ -134,10 +134,15 @@ lme4.dlm <- function(parsed, family = gaussian(),
     else
       .Unrecognized("control", class(control))
   }
+  ## reassign environment for formula so [g]lFormula knows where
+  ## to look for parsed in calls to eval()
+  ##   -- may be a better way to do this!
+  formula <- parsed$lme4.formula
+  environment (formula) <- sys.frame(sys.nframe())
   if (linear) {
     ## weights and offset are NULL values if missing and are handled
     ## correctly in any case
-    pf <- lme4::lFormula(parsed$lme4.formula, data = parsed$model,
+    pf <- lme4::lFormula(formula, data = parsed$model,
                    control = control,
                    weights = parsed$model[["(weights)"]],
                    offset = parsed$model[["(offset)"]],
@@ -189,7 +194,7 @@ makeDlMod.merMod <- function(object, parsed, call, ...) {
   if (!inherits(parsed, "parsed.dlm")) .Unrecognized("parsed", class(parsed))
   if (missing(call)) call <- object@call
   else if (!is.call(call)) .Unrecognized("call", class(call))
-  ## attr (object@frame, "lme4.formula") <- parsed$lme4.formula
+  attr (object@frame, "formula") <- parsed$lme4.formula
   index <- parsed$bi
   names (index) <- attr(parsed$lag.group, "dictionary")
   ## attr (index, "bi") <- parsed$bi
