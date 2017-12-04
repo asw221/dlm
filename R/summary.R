@@ -138,8 +138,9 @@ print.summary.dlMod <- function(x,
           corf <- matrix(format(round(corF@x, 3), nsmall = 3),
                          ncol = p,
                          dimnames = list(rns, abbreviate(rn, minlength = 6)))
+          corf <- corf[ic, ic]
           corf[!lower.tri(corf)] <- ""
-          print(corf[-1, -p, drop = FALSE], quote = FALSE)
+          print(corf[-1, -ncol(corf), drop = FALSE], quote = FALSE)
         } ## !symbolic.cor
       }  ## if (p > 1)
     } ## if (correlation)
@@ -158,7 +159,10 @@ print.summary.dlMod <- function(x,
 ## Formatting utilities (also from lme4)
 ## -------------------------------------------------------------------
 
-prt.methTit <- function(mtit, class) {
+
+cat.f <- function(...) cat(..., fill = TRUE)
+
+.prt.methTit <- function(mtit, class) {
   if(nchar(mtit) + 5 + nchar(class) > (w <- getOption("width"))) {
     ## wrap around
     mtit <- strwrap(mtit, width = w - 2, exdent = 2)

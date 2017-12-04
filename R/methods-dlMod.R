@@ -110,23 +110,26 @@ setMethod("lagIndex", "dlMod",
 
 coef.dlMod <- function(object, scaled = TRUE, ...) {
   z <- vcoef(object, scaled = scaled)
-
-  fef <- t(fixef(object))
-  ref <- ranef(object)
-  li <- lagIndex(object)
-  is.lag <- names(ref) %in% names(object@index)
-  for (i in seq_along(is.lag)) {
-    if (is.lag[i]) {
-      refi <- data.frame(rep(1, nrow(ref[[i]])) %*% fef, check.names = FALSE)
-      for (nm in names(ref[[i]]))
-        refi[[nm]] <- if (is.null(refi[[nm]])) ref[, nm]
-                      else refi[[nm]] + ref[, nm]
-      ref[[i]] <- refi
+  if (length(w <- which(!(names(object@cnms) %in% names(object@index))))) {
+    p <- lme4::getME(object, "p")
+    li <- lagIndex(object, .fixed = FALSE)
+    fef <- t(z[c(1:p, unlist(li))])
+    val <- list(length(w))
+    names (val) <- names(object@cnms[w])
+    for (i in seq_along(w)) {
+      j <- w[i]
+      refi <- matrix(z[(object@Gp[j] + 1):object@Gp[j + 1] + p],
+                     ncol = length(object@cnms[[j]]), byrow = TRUE)
+      colnames (refi) <- object@cnms[[j]]
+      val[[i]] <- data.frame(rep(1, nrow(refi)) %*% fef, check.names = FALSE)
+      rownames (val[[i]]) <- as.character(levels(object@flist[[j]]))
+      for (nm in colnames(refi))
+        val[[i]][[nm]] <- if (is.null(val[[i]][[nm]])) refi[, nm]
+          else val[[i]][[nm]] + refi[, nm]
     }
-    else {
-    }
+    z <- val
   }
-  invisible (0)
+  structure(z, class = "coef.mer")
 }
 
 

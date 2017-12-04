@@ -5,7 +5,8 @@ export (cr, dlm, lme4.dlm, interpret.dlm, basis,
         makeDlMod, makeDlMod.merMod,
         is.LagBasis, is.SmoothLag, is.dlMod,
         coef.dlMod, summary.dlMod, confint.dlMod,
-        parse.names, plot.dlMod, qqnorm.dlMod
+        parse.names, plot.dlMod, qqnorm.dlMod,
+        print.summary.dlMod
         )
 
 export ("[.pnames")

@@ -173,6 +173,7 @@ lme4.dlm <- function(parsed, family = gaussian(),
     for (i in seq_along(lnms)) {
       Zt[(Gp[i]+1):Gp[i+1], ] <- parsed$Bt[parsed$lag.group[lnms[m[i]]], ]
       names (cnms)[i] <- lnms[m[i]]
+      cnms[[i]] <- "(mean)"
     }
   })
   devfun <- do.call(.Deviance, pf)
