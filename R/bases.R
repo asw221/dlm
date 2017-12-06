@@ -4,6 +4,7 @@
 
 #' @title Basis vector sets
 #'
+#' @description
 #'
 
 basis <- function(x, center = TRUE, scale = FALSE, ...,

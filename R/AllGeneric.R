@@ -44,8 +44,6 @@ setGeneric("lagIndex", function(object, ...) standardGeneric("lagIndex"))
 
 
 
-
-
 ## scaleMat
 ## -------------------------------------------------------------------
 #' @title Extract Distributed Lag Scale Matrix
