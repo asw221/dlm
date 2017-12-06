@@ -1,7 +1,6 @@
 
 
-
-
+#' @describeIn vcoef S4 Method for \code{"\link[=dlMod]{dlMod}"} Objects
 setMethod("vcoef0", signature = "dlMod",
           function(object, scaled = TRUE, ...) {
             z <- c(lme4::getME(object, "beta"),
@@ -10,21 +9,25 @@ setMethod("vcoef0", signature = "dlMod",
             if (scaled) c(as.matrix(scaleMat(object) %*% z)) else z
           })
 
+#' @describeIn vcoef S4 Method for \code{"\link[=dlMod]{dlMod}"} Objects
 setMethod("vcoef", signature = "dlMod",
           function(object, scaled = TRUE, ...) {
             z <- vcoef0(object, scaled = scaled)
+            ## build names(z):
             p <- lme4::getME(object, "p")
             ng <- diff(object@Gp)
             nms <- character(length(z))
             nms[1:p] <- colnames(lme4::getME(object, "X"))
             for (i in seq_along(object@cnms)) {
               nm <- names(object@cnms)[i]
-              if (nm %in% names(object@index)) {
+              if (nm %in% names(object@index)) {  # spline term
+                ## paste in decomposed lag term scales
+                ## the first few are treated as fixed effects
                 x <- tail(object@bases[[object@index[nm]]]@x, ng[i])
                 new.nms <- paste(nm, x, sep = "")
               }
-              else {
-                ## may not work for factors with missing levels
+              else {  # non-spline random effect
+                ## paste in factor levels
                 new.nms <- paste(nm, levels(object@flist[[i]]), sep = "")
                 new.nms <- sapply(new.nms, paste, object@cnms[[i]], sep = ".")
               }
@@ -74,6 +77,7 @@ setMethod("Sigma", signature = "dlMod",
 
 setMethod("changePoint", "dlMod",
           function(object, ...) {
+            .Ignored(...)
             ci <- confint(object, ...)
             non0 <- !(ci[, 1] <= 0 & ci[, ncol(ci)] >= 0)
             lapply(lagIndex(object),
@@ -92,6 +96,7 @@ setMethod("lagIndex", "dlMod",
               i <- which(names(obj@cnms) == name)
               (obj@Gp[i] + 1):obj@Gp[i + 1] + lme4::getME(obj, "p")
             }
+            .Ignored(...)
             lnms <- names (object@index)
             ndx <- lapply(lnms, function(nm) .ind(object, nm))
             names (ndx) <- lnms
@@ -109,6 +114,7 @@ setMethod("lagIndex", "dlMod",
 
 
 coef.dlMod <- function(object, scaled = TRUE, ...) {
+  .Ignored(...)
   z <- vcoef(object, scaled = scaled)
   if (length(w <- which(!(names(object@cnms) %in% names(object@index))))) {
     p <- lme4::getME(object, "p")

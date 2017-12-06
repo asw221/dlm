@@ -94,14 +94,27 @@ SmoothLag <- setClass("SmoothLag",
 
 ## dlMod
 ## -------------------------------------------------------------------
-
+#' @title Distributed lag models
+#'
+#' @slot resp An \code{\link[lme4]{lmResp}} object to store a
+#' mixed-model response variable
+#'
+#' @slot bases A list of \code{\link{LagBasis}} objects corresponding
+#' to the unique set of lag bases used to fit the model
+#'
+#' @slot index A (named) integer vector providing the index of the
+#' basis set in \code{bases} corresponding to each lag term in the
+#' model
+#'
+#' @name dlMod
+#'
 dlMod <- setClass("dlMod",
                   slots = c(
-                    resp = "lmResp",
+                    resp = "lmResp",   # from lme4
                     bases = "list",
                     index = "numeric"
                   ),
-                  contains = "merMod"
+                  contains = "merMod"  # also from lme4
                   )
 
 ## ldlMod <- setClass("ldlMod", contains = "dlMod")

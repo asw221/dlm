@@ -1,19 +1,29 @@
 
 import (methods, lme4, Matrix)
 
-export (cr, dlm, lme4.dlm, interpret.dlm, basis,
-        makeDlMod, makeDlMod.merMod,
-        is.LagBasis, is.SmoothLag, is.dlMod,
-        coef.dlMod, summary.dlMod, confint.dlMod,
-        parse.names, plot.dlMod, qqnorm.dlMod,
-        print.summary.dlMod
+export (basis,
+        cr,
+        dlm,
+        interpret.dlm, is.LagBasis, is.SmoothLag, is.dlMod,
+        lme4.dlm,
+        makeDlMod,
+        parse.names
         )
 
-export ("[.pnames")
+export ("[.pnames",
+        "coef.dlMod", "confint.dlMod",
+        "makeDlMod.merMod",
+        "plot.dlMod", "print.summary.dlMod",
+        "qqnorm.dlMod",
+        "summary.dlMod"
+        )
 
 exportClasses (dlMod, LagBasis, SmoothLag)
 
-exportMethods ("[", "reIndex", "vcoef", "omega", "se.ranef", "se.fixef",
-               "scaleMat", "changePoint", "Sigma", "cholfVar",
-               "lagIndex", "vcoef0"
-  )
+exportMethods ("[",
+               "changePoint", "cholfVar",
+               "lagIndex",
+               "omega",
+               "scaleMat", "se.ranef", "se.fixef", "Sigma",
+               "vcoef", "vcoef0"
+               )

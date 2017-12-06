@@ -4,7 +4,8 @@
 
 #' @title Basis vector sets
 #'
-#'
+#' @description
+#' 
 
 basis <- function(x, center = TRUE, scale = FALSE, ...,
                   .fun = function(x, ...) abs(outer(x, x, "-"))^3

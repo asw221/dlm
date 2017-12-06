@@ -12,20 +12,50 @@
 #' @param data
 #'   a model-frame containing the data for each term in the model.
 #'   Should already be appropriately subset, etc.
+#' @param .names.func
+#'   a function for creating names of dummy variables that act as
+#'   placeholders for penalized spline terms in lme4's setup.
+#'   There should not be a need to alter this in normal use cases
 #'
 #' @details
-#' Uses R's \code{\link[stats]{model.matrix}} mechanisms to build
-#' and parse "random effects" components of distributed lag terms.
+#' Users should not typically have to interact with \code{interpret.dlm}
+#' directly, but it may be useful for extensions.
+#'
+#' Uses \code{R}'s \code{\link[stats]{model.matrix}} mechanisms to build
+#' and parse the random effects (or penalized) components of spline-lag terms
+#' in the model. The object returned is later passed to other \pkg{dlm}
+#' functions in order to fit the specified model.
+#'
 #'
 #' @return
-#' A \code{list} object...
+#' an S3 object of class \code{"parsed.dlm"} with list elements:
+#' \describe{
+#'   \item{\code{formula}}{the formula passed to \code{\link{dlm}}}
+#'   \item{\code{lme4.formula}}{a reconstructed formula that \code{lme4} sees}
+#'   \item{\code{model}}{a \code{data.frame} returned by call to
+#'     \code{\link[stats]{model.frame}}}
+#'   \item{\code{Bt}}{a matrix of the random or penalized lag basis vectors,
+#'     where each vector is a row. Stored as an object that inherits from
+#'     \code{\link[Matrix]{dMatrix}}}
+#'   \item{\code{bases}}{a list of all the unique bases represented in the
+#'     \code{formula}. This may be \eqn{<=} the number of separate spline-lag
+#'     terms. All elements should inherit from \code{\link{SmoothLag}}}
+#'   \item{\code{lag.group}}{an integer vector returned by
+#'     \code{\link{parse.names}} where each unique integer corresponds to a
+#'     separate spline-lag term. For lag term \code{i}, \code{lag.group == i}
+#'     indexes the rows of \code{Bt} that correspond to the set of random or
+#'     penalized basis vectors for that term}
+#'   \item{\code{bi}}{for "basis index." Each set of lag terms indexed in
+#'     \code{lag.group} has a matching basis decomposition in \code{bases}.
+#'     \code{bi} keeps track of that matching}
+#' }
 #'
 
-interpret.dlm <- function(formula, data,   ## random,
+interpret.dlm <- function(formula, data,
   .names.func = function(n) paste("pseudoGroups", n, sep = "")
 ) {
   fake.formula <- Reduce(paste, deparse(formula))
-  mt <- attr(data, "terms")
+  mt <- terms(data)
   mtf <- attr(mt, "factor")
   ## attr(mt.tmp, "intercept") <- 0  ## RE design does not have intercept
   if (is.empty.model(mt))
@@ -36,9 +66,9 @@ interpret.dlm <- function(formula, data,   ## random,
   ## but replace the "main effects" components of smooth DL terms with
   ## their "random effects" basis sets
   mf.lag <- data
-  lag <- logical(ncol(mtf))  ## which terms in data are lag terms
+  lag <- logical(NROW(mtf))  ## which terms in data are lag terms
   bases <- list()
-  for (j in 1:ncol(mtf))  if (lag[j] <- is.SmoothLag(data[[j]])) {
+  for (j in 1:NROW(mtf))  if (lag[j] <- is.SmoothLag(data[[j]])) {
     mf.lag[[j]] <- mf.lag[[j]]@random
     bases[[j]] <- data[[j]]@basis
     data[[j]] <- data[[j]]@.Data
@@ -59,30 +89,15 @@ interpret.dlm <- function(formula, data,   ## random,
     Bt <- Bt[-1L, , drop = FALSE]
   rm (mf.lag)
 
-  ## fenms <- colnames (X <- model.matrix(lme4::nobars(formula), mf))
-  ## p <- ncol(X)
-  ## rm (mf.lag, X)
-
-
-  ## if (!is.null(bars <- lme4::findbars(formula))) {
-
-  ## }
-
-  ## p.fenms <- parse.names(lag.nms, fenms, .warn = FALSE)
-  ## index <- list(covariates = p.fenms[character(1L)],
-  ##   smooth = lapply(lag.nms, function(i) p.fenms[i])
-  ##   )
-
   ## use text processing on the variable names to decide which
   ## groups of terms belong to which lag set (or not) and thus
   ## should be modeled as an independent random effect
   grp <- parse.names(lag.nms, rownames(Bt))
+  if (any(grp == 0))  stop ("Unable to parse some basis terms. Please report")
   for (j in unique(grp)) {
     pn <- .names.func(j)
     data[[pn]] <- factor(rep(1:sum(grp == j), length.out = nrow(data)))
     fake.formula <- paste0(fake.formula, " + (1 | ", pn, ")")
-    ## names (index$smooth)[j] <- pn
-    ## names (lag.nms)[j] <- pn
     names (attr(grp, "dictionary"))[j] <- pn
   }
   bi <- if (length(lag.nms) == 1L)  rep(1L, length(attr(grp, "dictionary")))
@@ -95,9 +110,7 @@ interpret.dlm <- function(formula, data,   ## random,
          model = data,
          Bt = Bt,
          bases = bases,
-         ## index = index,
          bi = bi,
-         ## lag.names = lag.nms,
          lag.group = grp
          ),
     class = "parsed.dlm"
