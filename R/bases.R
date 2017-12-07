@@ -1,25 +1,85 @@
 
 ## basis function extensions should be of class "SmoothLag"
 
-
+## basis
+## -------------------------------------------------------------------
 #' @title Basis vector sets
 #'
 #' @description
+#' Construct a set of basis vectors based on the distances between
+#' input points
 #'
+#' Users should not typically interact with \code{basis} directly.
+#' Typical usage relies on calling basis application functions, like
+#' \code{\link{cr}}, directly and/or in \code{\link{dlm}} model
+#' formulae
+#'
+#' @usage
+#' basis(x, center = TRUE, scale = FALSE, ...,
+#'       .fun = function(x, ...) abs(outer(x, x, "-"))^3)
+#'
+#' @param x
+#'   a set of points to measure distances between; the resultant
+#'   distance matrix will be decomposed into a set of basis vectors
+#' @param center
+#'   if \code{TRUE} (the default), parameter \code{x} will be mean
+#'   centered prior to computing distances. Otherwise, if given a
+#'   \code{numeric} value, \code{x} will be centered at \code{center}
+#' @param scale
+#'   if \code{TRUE} (default = \code{FALSE}), parameter \code{x}
+#'   will be scaled by \code{sd(x)}. Otherwise, if given a
+#'   \code{numeric} value, \code{x} will be scaled by \code{scale}
+#' @param .fun
+#'   a function to compute the distances between the values in \code{x}.
+#'   The default is to compute pairwise cubed absolute distances
+#' @param ...
+#'   other parameters passed to \code{.fun}
+#'
+#' @details
+#' Alternative distance functions, \code{.fun}, may be specified, and
+#' error checking on the user's choice of \code{.fun} is deliberately
+#' missing. Proper candidates for \code{.fun} should return a
+#' (\code{length(x)} by \code{length(x)}) matrix, however, and values
+#' are typically non-negative.
+#'
+#' The distance matrix decomposition follows Rupert, Wand, and Carroll
+#' (2003). In particular, once \code{x} and \code{.fun} are chosen and
+#' we define distance matrix \code{C_1 = .fun(x, ...)}, and we let
+#'
+#' \deqn{C_0 = [1^{(n \times 1)}, x]}{C[0] = [1, x]}
+#' \deqn{C_1 = Q R}{C[1] = Q * R}
+#' \deqn{M_1 = Q_{-(1:2)}}{M[1] = Q[-(1:2)]}
+#' \deqn{K_1 = C_1 M_1 (M_1^T C_1 M_1)^{-\frac{1}{2}}}{K[1] = C[1] * M[1] * (M[1]' * C[1] * M[1])^-0.5}
+#'
+#' where \eqn{A_{-j}}{A[-j]} denotes a matrix \eqn{A} with column(s) \eqn{j}
+#' removed. Then we are interested in estimating effects scaled by the
+#' matrix \eqn{\Omega = [C_0, K_1]}{\Omega = [C[0], K[1]]}
+#'
+#' @return An object of class \code{\link{LagBasis}}
+#'
+#' @seealso \code{\link{cr}}, \code{\link{dlm}}
+#'
+#' @references Rupert D, Wand MP, & Carroll RJ (2003) Semiparametric
+#' Regression. New York: Cambridge University Press.
+#'
+#' @name basis
+basis <- function(x, center = TRUE, scale = FALSE, ..., .fun = NULL) {
+  ## setup .fun
+  if (is.null(.fun))  # default to pairwise cubic absolute distance
+    .fun <- function(x, ...) abs(outer(x, x, "-"))^3
+  else if (!is.function(.fun))
+    stop (".fun must be a function")
 
-basis <- function(x, center = TRUE, scale = FALSE, ...,
-                  .fun = function(x, ...) abs(outer(x, x, "-"))^3
-                  ) {
   ## scale and center lag, if desired
   cntr <- 0
   scl <- 1
   if (center && is.logical(center))
-    cntr <- mean(x)
+    cntr <- mean(x, na.rm = TRUE)
   else if (center)
     cntr <- center
 
   if (scale && is.logical(scale))
-    scl <- sd(x)
+    scl <- sd(x, na.rm = TRUE)
   else if (scale)
     scl <- scale
   cx <- c(x - cntr) / scl
@@ -27,7 +87,7 @@ basis <- function(x, center = TRUE, scale = FALSE, ...,
   ## compute basis vectors
   ## decompose the basis vector set to control degrees of
   ## freedom in the downstream model. This bit follows
-  ## CITATION
+  ## Rupert Wand and Carroll (see references above)
   C0 <- cbind(1, cx)
   colnames (C0) <- x[1:NCOL(C0)]
   C1 <- .fun(cx, ...)
@@ -42,34 +102,37 @@ basis <- function(x, center = TRUE, scale = FALSE, ...,
            C0 = C0, K1 = K1
            )
 }
+## basis
 
 
 
 
-
-#' @title Cubic Radial Basis
+## Smoothing Help
+## -------------------------------------------------------------------
+#' @title Basis smoothing
+#' @inherit basis references
 #'
 #' @description
+#' UPDATE!
+#'
 #' Construct a natural cubic radial basis set for a given
 #' lag vector and apply as a linear transformation of a
 #' concentration matrix.
 #'
 #' @param x
 #'   a vector of values to construct the basis from. Missing values
-#'   are not allowed.
-#'
+#'   are not allowed
 #' @param Z
 #'   a covariate matrix (or object that can be coerced to a \code{matrix})
 #'   to apply the linear basis transformation to.
-#'   \code{length(x)} should be the same as \code{ncol(Z)}.
-#'
+#'   \code{length(x)} should be the same as \code{ncol(Z)}
 #' @param ...
 #'   arguments to be passed to \code{\link{basis}}
 #'
 #' @details
 #'   \code{cr} is little more than a convenient
 #'   wrapper to the function \code{\link{basis}} and the
-#'   \code{\link{SmoothBasis}} class constructor. It is intended to
+#'   \code{\link{SmoothLag}} class constructor. It is intended to
 #'   simplify the task of specifying lag terms in a model \code{formula}.
 #'   The function computes a set of natural cubic basis vectors for
 #'   parameter \code{x} and applies this basis as a linear transformation
@@ -94,16 +157,30 @@ basis <- function(x, center = TRUE, scale = FALSE, ...,
 #' x <- seq(0.1, 10, length.out = ncol(Conc))
 #' crb <- cr(x, Conc)
 #'
+#' @name smoothing
+NULL
 
-cr <- function(x, Z, ..., .fun = NULL) {
+
+
+
+#' @describeIn smoothing natural cubic radial basis spline
+cr <- function(x, Z, ...) {
+  .Ignored(...)
+  val <- sm(x, Z)
+  val@signature <- deparse(sys.call())
+  val
+}
+## cr
+
+
+#' @describeIn smoothing user-defined smoothing
+sm <- function(x, Z, ..., .fun = NULL) {
   if (any(is.na(x)) || any(is.na(Z)))
     stop ("missing values not allowed")
   if (is.data.frame(Z))  Z <- as.matrix(Z)
   if (length(x) != NCOL(Z))
     stop ("arguments do not have compatible dimensions")
-  if (!is.null(.fun))
-    warning (".fun is not changeable for a dedicated basis type")
-  B <- basis(x, ...)
+  B <- basis(x, .fun = .fun, ...)
   ## The S4 constructor will automatically recast Matrix::dMatrix
   ## type objects here (or similar)
   SmoothLag(Z %*% B@C0, random = Z %*% B@K1,
@@ -111,5 +188,7 @@ cr <- function(x, Z, ..., .fun = NULL) {
             signature = deparse(sys.call())
             )
 }
+## sm
+
 
 

@@ -1,12 +1,13 @@
 
-#' @title Distributed Lag Models
+#' @title Distributed lag models
 #'
 #' @description
-#' Fit distributed lag models to distance-profiled data.
-#' \code{frequentist} method relies on the modular functions in the
-#' \code{\link[=lme4]{lme4}} package.
-#' \code{bayesian} method uses Gibbs to sample from full conditionals,
-#' with sampling parameters named in the \code{control} list.
+#' Fit distributed lag models
+#'
+#' @usage
+#' dlm(formula, data, subset, na.action, weights, offset,
+#'     method = c("REML", "MLE"), family = gaussian(),
+#'     control = list(), ...)
 #'
 #' @param formula
 #'   an object of class \code{"\link[stats]{formula}"}:
@@ -70,6 +71,20 @@
 #' list with components of the fitted model.
 #'
 #'
+#' @references Baek J, Sanchez BN, Berrocal BJ, & Sanchez-Vaznaugh EV
+#' (2016) Epidemiology 27(1):116-24.
+#' (\href{https://www.ncbi.nlm.nih.gov/pubmed/26414942}{PubMed})
+#'
+#' @references Baek J, Hirsch JA, Moore K, Tabb LP, et al. (2017)
+#' Epidemiology 28(3):403-11.
+#' (\href{https://www.ncbi.nlm.nih.gov/pubmed/28145983}{PubMed})
+#'
+#' @references Bates D, Maechler M, Bolker BM, & Walker SC (2015)
+#' Fitting linear mixed-effects models using lme4. J
+#' Stat Softw 67(1).
+#' (\href{https://www.jstatsoft.org/article/view/v067i01/0}{jstatsoft.org})
+#'
+#'
 #' @examples
 #' data (simdata)
 #'
@@ -81,7 +96,7 @@
 #' summary (fit)
 #'
 #' @seealso \code{\link[lme4]{lmer}}, \code{\link{cr}},
-#'   \code{\link{Dlm-class}}, \code{\link{FreqDlm}}, \code{\link{BayesDlm}}
+#'   \code{\link{dlMod}}
 #'
 
 dlm <- function(formula, data, subset, na.action, weights, offset,
@@ -118,7 +133,7 @@ dlm <- function(formula, data, subset, na.action, weights, offset,
 
 
 lme4.dlm <- function(parsed, family = gaussian(),
-                     control = list(),
+                     control = list(), REML = FALSE,
                      ...
 ) {
   if (!inherits(parsed, "parsed.dlm")) .Unrecognized("parsed", class(parsed))
@@ -146,7 +161,7 @@ lme4.dlm <- function(parsed, family = gaussian(),
     ## weights and offset are NULL values if missing and are handled
     ## correctly in any case
     pf <- lme4::lFormula(formula, data = parsed$model,
-                   control = control,
+                   control = control, REML = REML,
                    weights = parsed$model[["(weights)"]],
                    offset = parsed$model[["(offset)"]],
                    ...
@@ -155,6 +170,7 @@ lme4.dlm <- function(parsed, family = gaussian(),
     .Optimize <- lme4::optimizeLmer
   }
   else {  # glFormula needs a 'family' argument; all else the same
+    ## REML only for linear case
     pf <- lme4::glFormula(formula, data = parsed$model,
                    control = control, family = family,
                    weights = parsed$model[["(weights)"]],

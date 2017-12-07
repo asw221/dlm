@@ -1,9 +1,23 @@
 
 
 
-
+## plot.dlMod
+## -------------------------------------------------------------------
+#' @title Plot smoothed lag terms
+#'
+#' @description
+#' Plot estimated lag-spline effects
+#'
+#' @usage
+#' plot(x, geom = c("pointrange", "line"), level = 0.95, scaled = TRUE, ...)
+#'
+#' @return a \code{ggplot2} graphic object
+#'
+#' @name plotDlm
 plot.dlMod <- function(x, y, geom = c("pointrange", "line"),
                        level = 0.95, scaled = TRUE, ...) {
+  if (!missing(y) && missing(geom)) geom <- y
+  else if (!missing(y)) .Ignored(y = y)
   geom <- match.arg(geom)
   ci <- confint(x, level = level, scaled = scaled)
   ci <- ci[, c(1:2, ncol(ci))]
@@ -20,7 +34,8 @@ plot.dlMod <- function(x, y, geom = c("pointrange", "line"),
 
 
 
-
+## qqnorm.dlMod
+## -------------------------------------------------------------------
 qqnorm.dlMod <- function(y, ...) {
   r <- residuals(y, "pearson", scaled = TRUE)
   df <- data.frame(x = qnorm(ppoints(length(r))), y = sort(r))
@@ -31,10 +46,12 @@ qqnorm.dlMod <- function(y, ...) {
          title = "Normal Q-Q Plot"
          )
 }
+## qqnorm.dlMod
 
 
 
-
+## .lag.ggplot (not exported)
+## -------------------------------------------------------------------
 .lag.ggplot <- function(.data, .geom, ...) {
   g <- ggplot(.data, aes(x = Lag)) +
     geom_hline(yintercept = 0, linetype = "dashed") +

@@ -1,8 +1,7 @@
 
-
-is.LagBasis <- function(object, ...)  inherits(object, "LagBasis")
-is.SmoothLag <- function(object, ...) inherits(object, "SmoothLag")
-is.dlMod <- function(object, ...)     inherits(object, "dlMod")
+## is.LagBasis <- function(object, ...)  inherits(object, "LagBasis")
+## is.SmoothLag <- function(object, ...) inherits(object, "SmoothLag")
+## is.dlMod <- function(object, ...)     inherits(object, "dlMod")
 
 
 makeDlMod <- function(object, ...) UseMethod("makeDlMod", object)
@@ -11,13 +10,15 @@ makeDlMod <- function(object, ...) UseMethod("makeDlMod", object)
 
 ## cholfVar
 ## -------------------------------------------------------------------
-## Extract Cholesky factor of inverse Information matrix
+#' @title Extract Cholesky factor of inverse Information matrix
+#' @name cholfVar
 setGeneric("cholfVar", function(object, ...) standardGeneric("cholfVar"))
 
 
 ## Sigma
 ## -------------------------------------------------------------------
-## Variance matrix for regression coefficients
+#' @title Extract model coefficients variance matrix
+#' @name Sigma
 setGeneric("Sigma", function(object, ...) standardGeneric("Sigma"))
 
 
@@ -25,21 +26,22 @@ setGeneric("Sigma", function(object, ...) standardGeneric("Sigma"))
 ## -------------------------------------------------------------------
 #' @title Vectorized coefficients
 #'
-#' @description Extract fixed and random effects coefficient vector,
-#' \eqn{(\beta, b)^T} from a fitted \code{\link{dlMod}} object
+#' @description
+#' Extract fixed and random effects coefficient vector,
+#' \eqn{(\beta, b)'} from a fitted \code{\link{dlMod}} object
 #'
 #'
 #' @return A numeric vector: with variable names in the case of \code{vcoef}
 #'
 #' @name vcoef
-#'
-setGeneric("vcoef0", function(object, ...) standardGeneric("vcoef0"))
 setGeneric("vcoef", function(object, ...) standardGeneric("vcoef"))
+setGeneric("vcoef0", function(object, ...) standardGeneric("vcoef0"))
 
 
 ## lagIndex
 ## -------------------------------------------------------------------
-## Extract list of indices of lag terms
+#' @title Extract list of indices of lag terms
+#' @name lagIndex
 setGeneric("lagIndex", function(object, ...) standardGeneric("lagIndex"))
 
 
@@ -60,6 +62,7 @@ setGeneric("lagIndex", function(object, ...) standardGeneric("lagIndex"))
 #' @details
 #' \code{scaleMat} is S4 generic.
 #'
+#' @name scaleMat
 setGeneric("scaleMat",
            function(object, ...) standardGeneric("scaleMat")
            )
@@ -72,7 +75,7 @@ setGeneric("scaleMat",
 #' @title Lag Coefficient Change Points
 #'
 #' @return An integer vector
-#'
+#' @name changePoint
 setGeneric("changePoint", function(object, ...) standardGeneric("changePoint"))
 
 
@@ -93,6 +96,8 @@ setGeneric("changePoint", function(object, ...) standardGeneric("changePoint"))
 #'
 #' @details
 #' \code{omega} is S4 generic.
+#'
+#' @name omega
 setGeneric("omega", function(object, ...) standardGeneric("omega"))
 
 

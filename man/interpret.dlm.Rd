@@ -13,9 +13,33 @@ See \code{\link{dlm}} for details.}
 
 \item{data}{a model-frame containing the data for each term in the model.
 Should already be appropriately subset, etc.}
+
+\item{.names.func}{a function for creating names of dummy variables that act as
+placeholders for penalized spline terms in lme4's setup.
+There should not be a need to alter this in normal use cases}
 }
 \value{
-A \code{list} object...
+an S3 object of class \code{"parsed.dlm"} with list elements:
+\describe{
+  \item{\code{formula}}{the formula passed to \code{\link{dlm}}}
+  \item{\code{lme4.formula}}{a reconstructed formula that \code{lme4} sees}
+  \item{\code{model}}{a \code{data.frame} returned by call to
+    \code{\link[stats]{model.frame}}}
+  \item{\code{Bt}}{a matrix of the random or penalized lag basis vectors,
+    where each vector is a row. Stored as an object that inherits from
+    \code{\link[Matrix]{dMatrix}}}
+  \item{\code{bases}}{a list of all the unique bases represented in the
+    \code{formula}. This may be \eqn{<=} the number of separate spline-lag
+    terms. All elements should inherit from \code{\link{SmoothLag}}}
+  \item{\code{lag.group}}{an integer vector returned by
+    \code{\link{parse.names}} where each unique integer corresponds to a
+    separate spline-lag term. For lag term \code{i}, \code{lag.group == i}
+    indexes the rows of \code{Bt} that correspond to the set of random or
+    penalized basis vectors for that term}
+  \item{\code{bi}}{for "basis index." Each set of lag terms indexed in
+    \code{lag.group} has a matching basis decomposition in \code{bases}.
+    \code{bi} keeps track of that matching}
+}
 }
 \description{
 Given an appropriate DL model formula and data-frame, prepares
@@ -23,6 +47,11 @@ the data to be fit by interpreting the formula and extracting
 available smooth lag terms.
 }
 \details{
-Uses R's \code{\link[stats]{model.matrix}} mechanisms to build
-and parse "random effects" components of distributed lag terms.
+Users should not typically have to interact with \code{interpret.dlm}
+directly, but it may be useful for extensions.
+
+Uses \code{R}'s \code{\link[stats]{model.matrix}} mechanisms to build
+and parse the random effects (or penalized) components of spline-lag terms
+in the model. The object returned is later passed to other \pkg{dlm}
+functions in order to fit the specified model.
 }

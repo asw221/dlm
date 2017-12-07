@@ -4,10 +4,11 @@ import (methods, lme4, Matrix)
 export (basis,
         cr,
         dlm,
-        interpret.dlm, is.LagBasis, is.SmoothLag, is.dlMod,
+        interpret.dlm,  # is.LagBasis, is.SmoothLag, is.dlMod,
         lme4.dlm,
         makeDlMod,
-        parse.names
+        parse.names,
+        sm
         )
 
 export ("[.pnames",
@@ -24,6 +25,6 @@ exportMethods ("[",
                "changePoint", "cholfVar",
                "lagIndex",
                "omega",
-               "scaleMat", "se.ranef", "se.fixef", "Sigma",
+               "scaleMat", "Sigma",
                "vcoef", "vcoef0"
                )

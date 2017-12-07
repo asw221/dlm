@@ -8,6 +8,8 @@
 ## cr(lag, X):factor(group)1 to have a different index
 ## than cr(lag, X):factor(group)2, and so on
 ##
+#' @title parse.names
+#'
 parse.names <- function(base, names, .warn = TRUE) {
   regex <- sprintf(":?\\b?\\Q%s\\E[0-9.]*\\b?:?", base)
   base.index <- apply(sapply(regex, grepl, names), 1, which)

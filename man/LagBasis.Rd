@@ -7,7 +7,10 @@
 \description{
 S4 class object to store and query components of
 lag basis functions. User interface for creating this class can be found in
-\code{\link{lag.basis}}.
+\code{\link{basis}}.
+}
+\details{
+See \code{\link{basis}} for details of the decomposition
 }
 \section{Slots}{
 
@@ -26,6 +29,6 @@ useful primarily for the \code{predict} method in the future}
 }}
 
 \references{
-Baek J, et al. (2016) Epidemiology 27(1):116-24.
-(\href{https://www.ncbi.nlm.nih.gov/pubmed/26414942}{PubMed})
+Rupert D, Wand MP, & Carroll RJ (2003) Semiparametric
+Regression. New York: Cambridge University Press.
 }
