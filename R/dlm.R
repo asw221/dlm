@@ -187,11 +187,19 @@ lme4.dlm <- function(parsed, family = gaussian(),
   m <- match(names(lnms), names(pf$reTrms$cnms))
   pf$reTrms <- within(pf$reTrms, {
     for (i in seq_along(lnms)) {
-      Zt[(Gp[i]+1):Gp[i+1], ] <- parsed$Bt[parsed$lag.group[lnms[m[i]]], ]
-      names (cnms)[i] <- lnms[m[i]]
+      j <- m[i]
+      Zt[(Gp[j]+1):Gp[j+1], ] <- parsed$Bt[parsed$lag.group[lnms[i]], ]
+      names (cnms)[j] <- lnms[i]
       cnms[[i]] <- "(mean)"
     }
   })
+  ## pf$reTrms <- within(pf$reTrms, {
+  ##   for (i in seq_along(lnms)) {
+  ##     Zt[(Gp[i]+1):Gp[i+1], ] <- parsed$Bt[parsed$lag.group[lnms[m[i]]], ]
+  ##     names (cnms)[i] <- lnms[m[i]]
+  ##     cnms[[i]] <- "(mean)"
+  ##   }
+  ## })
   devfun <- do.call(.Deviance, pf)
   optim <- .Optimize(devfun)
   fit <- lme4::mkMerMod(rho = environment(devfun),

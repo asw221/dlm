@@ -99,7 +99,7 @@ basis <- function(x, center = TRUE, scale = FALSE, ..., .fun = NULL) {
   ## if numerical issues come to the fore at some point,
   ## may consider norming the C0, K1 matrices
   LagBasis(x = x, x.center = cntr, x.scale = scl,
-           C0 = C0, K1 = K1
+           C0 = C0, K1 = K1, dist.fun = .fun
            )
 }
 ## basis

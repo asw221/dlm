@@ -21,6 +21,9 @@
 #'   C_0 part of basis matrix
 #' @slot K1
 #'   K_1 part of basis matrix
+#' @slot dist.fun
+#'   whatever distance function was used to compute the pointwise
+#'   distances between the elements of \code{x}
 #'
 #' @details
 #' See \code{\link{basis}} for details of the decomposition
@@ -33,7 +36,8 @@ LagBasis <- setClass("LagBasis",
            x.center = "numeric",
            x.scale = "numeric",
            C0 = "matrix",
-           K1 = "matrix"
+           K1 = "matrix",
+           dist.fun = "function"
          ),
          prototype = list(
            x = NA_real_,
