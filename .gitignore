@@ -10,5 +10,9 @@ bin/*
 tmp
 
 
+
 # Mac specific
 .DS_Store
+
+# R specific
+.Rhistory
