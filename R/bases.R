@@ -85,24 +85,17 @@ basis <- function(x, center = TRUE, scale = FALSE, ..., .fun = NULL) {
   cx <- c(x - cntr) / scl
 
   ## compute basis vectors
-  ## decompose the basis vector set to control degrees of
-  ## freedom in the downstream model. This bit follows
-  ## Rupert Wand and Carroll (see references above)
-  C0 <- cbind(1, cx)
-  colnames (C0) <- x[1:NCOL(C0)]
-  C1 <- .fun(cx, ...)
-  M1 <- qr.Q(qr(cbind(C0, C1)))[, -(1:2)]
-  S <- svd(t(M1) %*% C1 %*% M1)
-  M2.inv.sqrt <- S$v %*% diag(1 / sqrt(S$d)) %*% t(S$u)
-  K1 <- C1 %*% M1 %*% M2.inv.sqrt
-  colnames (K1) <- x[-(1:NCOL(C0))]
   ## if numerical issues come to the fore at some point,
   ## may consider norming the C0, K1 matrices
+  dcmp <- .ss.decomp(cx, .fun, ...)
+  colnames (dcmp$C0) <- x[1:NCOL(dcmp$C0)]
+  colnames (dcmp$K1) <- x[-(1:NCOL(dcmp$C0))]
   LagBasis(x = x, x.center = cntr, x.scale = scl,
-           C0 = C0, K1 = K1, dist.fun = .fun
+           C0 = dcmp$C0, K1 = dcmp$K1, dist.fun = .fun
            )
 }
 ## basis
+
 
 
 
@@ -189,6 +182,36 @@ sm <- function(x, Z, ..., .fun = NULL) {
             )
 }
 ## sm
+
+
+
+
+
+
+
+## .ss.decomp
+## -------------------------------------------------------------------
+.ss.decomp <- function(x, .fun, ...) {
+  ## decompose the basis vector set to control degrees of
+  ## freedom in the downstream model. This bit follows
+  ## Rupert Wand and Carroll (see references above)
+  C0 <- cbind(1, x)
+  C1 <- .fun(x, ...)
+  M1 <- qr.Q(qr(cbind(C0, C1)))[, -(1:NCOL(C0))]
+  S <- svd(t(M1) %*% C1 %*% M1)
+  M2.inv.sqrt <- S$v %*% diag(1 / sqrt(S$d)) %*% t(S$u)
+  K1 <- C1 %*% M1 %*% M2.inv.sqrt
+  structure(
+    list(C0 = C0, K1 = K1, M1 = M1, M2.inv.sqrt = M2.inv.sqrt),
+    class = "ss.decomp"
+    )
+}
+
+
+
+
+
+
 
 
 
