@@ -43,6 +43,14 @@ missing. Proper candidates for \code{.fun} should return a
 (\code{length(x)} by \code{length(x)}) matrix, however, and values
 are typically non-negative.
 
+In addition, new distance function definitions should follow the idiom:
+\code{
+  function(x, y, ...) {
+    if (missing(y))  y <- x
+    ...
+  }
+}
+
 The distance matrix decomposition follows Rupert, Wand, and Carroll
 (2003). In particular, once \code{x} and \code{.fun} are chosen and
 we define distance matrix \code{C_1 = .fun(x, ...)}, and we let

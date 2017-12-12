@@ -19,8 +19,13 @@ setMethod("omega", signature = "LagBasis",
 #' @description
 #' Not yet implemented
 #'
-predict.LagBasis <- function(object, ...) {
+predict.LagBasis <- function(object, x, ...) {
   stop ("Not yet Implemented")
+  cx <- (object@x - object@x.center) / object@x.scale
+  dcmp <- .ss.decomp(cx, object@dist.fun, ...)
+  cx.new <- (x - object@x.center) / object@x.scale
+  C0 <- cbind(1, cx.new)
+
 }
 ## predict.LagBasis
 

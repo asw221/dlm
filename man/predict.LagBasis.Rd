@@ -4,7 +4,7 @@
 \alias{predict.LagBasis}
 \title{Predict New Values for Fitted Lag Basis}
 \usage{
-\method{predict}{LagBasis}(object, ...)
+\method{predict}{LagBasis}(object, x, ...)
 }
 \arguments{
 \item{object}{A \code{\link{LagBasis}} object}

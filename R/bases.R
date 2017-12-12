@@ -42,6 +42,14 @@
 #' (\code{length(x)} by \code{length(x)}) matrix, however, and values
 #' are typically non-negative.
 #'
+#' In addition, new distance function definitions should follow the idiom:
+#' \code{
+#'   function(x, y, ...) {
+#'     if (missing(y))  y <- x
+#'     ...
+#'   }
+#' }
+#'
 #' The distance matrix decomposition follows Rupert, Wand, and Carroll
 #' (2003). In particular, once \code{x} and \code{.fun} are chosen and
 #' we define distance matrix \code{C_1 = .fun(x, ...)}, and we let
@@ -65,8 +73,8 @@
 #' @name basis
 basis <- function(x, center = TRUE, scale = FALSE, ..., .fun = NULL) {
   ## setup .fun
-  if (is.null(.fun))  # default to pairwise cubic absolute distance
-    .fun <- function(x, ...) abs(outer(x, x, "-"))^3
+  ## default to pairwise cubic absolute distance
+  if (is.null(.fun))  .fun <- .cr
   else if (!is.function(.fun))
     stop (".fun must be a function")
 
@@ -174,14 +182,22 @@ sm <- function(x, Z, ..., .fun = NULL) {
   if (length(x) != NCOL(Z))
     stop ("arguments do not have compatible dimensions")
   B <- basis(x, .fun = .fun, ...)
-  ## The S4 constructor will automatically recast Matrix::dMatrix
-  ## type objects here (or similar)
-  SmoothLag(Z %*% B@C0, random = Z %*% B@K1,
+  SmoothLag(as.matrix(Z %*% B@C0), random = as.matrix(Z %*% B@K1),
             basis = B,
             signature = deparse(sys.call())
             )
 }
 ## sm
+
+
+
+
+
+.cr <- function(x, y, ...) {
+  if (missing(y)) y <- x
+  abs(outer(x, y, "-"))^3
+}
+
 
 
 
@@ -206,6 +222,26 @@ sm <- function(x, Z, ..., .fun = NULL) {
     class = "ss.decomp"
     )
 }
+
+
+
+
+
+## basis.formals <- function(f) {
+##   if (!is.function(f)) .Unrecognized("f", class(f))
+##   if (!inherits(f, "dist.function")) {
+##     if (length(b <- as.list(body(f))))
+##       b <- if (b[[1L]] == as.name("{")) as.expression(b[-1L])
+##         else as.expression(body(f))
+##     else
+##       b <- expression(NULL)
+##     formals (f) <- alist(x = , y = , ... =)
+##     body (f) <- as.call(c(as.name("{"), expression(if (missing(y)) y <- x), b))
+##     class (f) <- c("dist.function", class(f))
+##   }
+##   f
+## }
+
 
 
 

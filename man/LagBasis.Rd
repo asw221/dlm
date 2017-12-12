@@ -26,6 +26,9 @@ useful primarily for the \code{predict} method in the future}
 \item{\code{C0}}{C_0 part of basis matrix}
 
 \item{\code{K1}}{K_1 part of basis matrix}
+
+\item{\code{dist.fun}}{whatever distance function was used to compute the pointwise
+distances between the elements of \code{x}}
 }}
 
 \references{
