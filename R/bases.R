@@ -7,16 +7,15 @@
 #'
 #' @description
 #' Construct a set of basis vectors based on the distances between
-#' input points
+#' input points.
 #'
 #' Users should not typically interact with \code{basis} directly.
 #' Typical usage relies on calling basis application functions, like
-#' \code{\link{cr}}, directly and/or in \code{\link{dlm}} model
-#' formulae
+#' \code{\link{cr}} (e.g. in \code{\link{dlm}} model
+#' formulae).
 #'
 #' @usage
-#' basis(x, center = TRUE, scale = FALSE, ...,
-#'       .fun = function(x, ...) abs(outer(x, x, "-"))^3)
+#' basis(x, center = TRUE, scale = FALSE, .fun = NULL, ...)
 #'
 #' @param x
 #'   a set of points to measure distances between; the resultant
@@ -30,8 +29,9 @@
 #'   will be scaled by \code{sd(x)}. Otherwise, if given a
 #'   \code{numeric} value, \code{x} will be scaled by \code{scale}
 #' @param .fun
-#'   a function to compute the distances between the values in \code{x}.
-#'   The default is to compute pairwise cubed absolute distances
+#'   a function to compute distances between the values in \code{x}.
+#'   The default is to compute pairwise cubed absolute distances. See
+#'   \code{details}
 #' @param ...
 #'   other parameters passed to \code{.fun}
 #'
@@ -50,18 +50,20 @@
 #'   }
 #' }
 #'
-#' The distance matrix decomposition follows Rupert, Wand, and Carroll
-#' (2003). In particular, once \code{x} and \code{.fun} are chosen and
-#' we define distance matrix \code{C_1 = .fun(x, ...)}, and we let
+#' The default value of \code{.fun} computes cubic radial distance,
+#' which amounts to \code{abs(outer(x, y, "-"))^3}; distance matrix
+#' decomposition follows Rupert, Wand, and Carroll
+#' (2003). In particular, once \code{x} and \code{.fun} are chosen,
+#' define distance matrix \code{C_1 = .fun(x, ...)}, and let
 #'
-#' \deqn{C_0 = [1^{(n \times 1)}, x]}{C[0] = [1, x]}
-#' \deqn{C_1 = Q R}{C[1] = Q * R}
-#' \deqn{M_1 = Q_{-(1:2)}}{M[1] = Q[-(1:2)]}
-#' \deqn{K_1 = C_1 M_1 (M_1^T C_1 M_1)^{-\frac{1}{2}}}{K[1] = C[1] * M[1] * (M[1]' * C[1] * M[1])^-0.5}
+#' \deqn{C_0 = [1^{(n \times 1)}, x]}{C_0 = [1, x]}
+#' \deqn{C_1 = Q R}{C_1 = Q * R}
+#' \deqn{M_1 = Q_{-(1:2)}}{M_1 = Q[-(1:2)]}
+#' \deqn{K_1 = C_1 M_1 (M_1^T C_1 M_1)^{-\frac{1}{2}}}{K_1 = C_1 * M_1 * (M_1' * C_1 * M_1)^-0.5}
 #'
 #' where \eqn{A_{-j}}{A[-j]} denotes a matrix \eqn{A} with column(s) \eqn{j}
-#' removed. Then we are interested in estimating effects scaled by the
-#' matrix \eqn{\Omega = [C_0, K_1]}{\Omega = [C[0], K[1]]}
+#' removed. Then distributed lag effects of interest are scaled by the
+#' matrix \eqn{\Omega = [C_0, K_1]}{\Omega = [C_0, K_1]}
 #'
 #' @return An object of class \code{\link{LagBasis}}
 #'
@@ -71,7 +73,7 @@
 #' Regression. New York: Cambridge University Press.
 #'
 #' @name basis
-basis <- function(x, center = TRUE, scale = FALSE, ..., .fun = NULL) {
+basis <- function(x, center = TRUE, scale = FALSE, .fun = NULL, ...) {
   ## setup .fun
   ## default to pairwise cubic absolute distance
   if (is.null(.fun))  .fun <- .cr
@@ -114,10 +116,8 @@ basis <- function(x, center = TRUE, scale = FALSE, ..., .fun = NULL) {
 #' @inherit basis references
 #'
 #' @description
-#' UPDATE!
-#'
-#' Construct a natural cubic radial basis set for a given
-#' lag vector and apply as a linear transformation of a
+#' Construct a set of basis vectors for distances between distributed
+#' lag points, and apply as a linear transformation of a
 #' concentration matrix.
 #'
 #' @param x
@@ -131,11 +131,11 @@ basis <- function(x, center = TRUE, scale = FALSE, ..., .fun = NULL) {
 #'   arguments to be passed to \code{\link{basis}}
 #'
 #' @details
-#'   \code{cr} is little more than a convenient
-#'   wrapper to the function \code{\link{basis}} and the
-#'   \code{\link{SmoothLag}} class constructor. It is intended to
+#'   These functions are little more than convenient
+#'   wrappers to the function \code{\link{basis}} and the
+#'   \code{\link{SmoothLag}} class constructor. They are intended to
 #'   simplify the task of specifying lag terms in a model \code{formula}.
-#'   The function computes a set of natural cubic basis vectors for
+#'   The functions computes a set of basis vectors for
 #'   parameter \code{x} and applies this basis as a linear transformation
 #'   of the covariate/concentration matrix parameter, \code{Z}. For example,
 #'   if \code{Z} is the identity matrix, the model fit will simply be
@@ -150,7 +150,7 @@ basis <- function(x, center = TRUE, scale = FALSE, ..., .fun = NULL) {
 #' An S4 object of class \code{\link{SmoothBasis}}.
 #'
 #' @examples
-#' ## load simulated data and extract concentration matrix
+#' ## load simulated data set and extract concentration matrix
 #' data (simdata)
 #' Conc <- simdata[, -(1:3)]  # First columns are Y, Age, and Gender
 #'
