@@ -15,13 +15,12 @@ See \code{\link{basis}} for details of the decomposition
 \section{Slots}{
 
 \describe{
-\item{\code{x}}{original lag data}
+\item{\code{x}}{original lag data. The set of points to generate the
+distance-decomposition basis from}
 
-\item{\code{x.center}}{store the value the lag data was centered to. In theory
-this is useful for the non-yet-implemented \code{predict} method}
+\item{\code{x.center}}{store the value the lag data was centered to}
 
-\item{\code{x.scale}}{store the value the lag data was scaled by. Again, should be
-useful primarily for the \code{predict} method in the future}
+\item{\code{x.scale}}{store the value the lag data was scaled by}
 
 \item{\code{C0}}{C_0 part of basis matrix}
 

@@ -1,4 +1,6 @@
 
+## interpret.dlm
+## -------------------------------------------------------------------
 #' @title Interpret a DLM Formula
 #'
 #' @description
@@ -14,7 +16,7 @@
 #'   Should already be appropriately subset, etc.
 #' @param .names.func
 #'   a function for creating names of dummy variables that act as
-#'   placeholders for penalized spline terms in lme4's setup.
+#'   placeholders for penalized spline terms in \pkg{lme4}'s setup.
 #'   There should not be a need to alter this in normal use cases
 #'
 #' @details

@@ -12,7 +12,7 @@
 #' Users should not typically interact with \code{basis} directly.
 #' Typical usage relies on calling basis application functions, like
 #' \code{\link{cr}} (e.g. in \code{\link{dlm}} model
-#' formulae).
+#' formulas).
 #'
 #' @usage
 #' basis(x, center = TRUE, scale = FALSE, .fun = NULL, ...)
@@ -31,7 +31,7 @@
 #' @param .fun
 #'   a function to compute distances between the values in \code{x}.
 #'   The default is to compute pairwise cubed absolute distances. See
-#'   \code{details}
+#'   Details
 #' @param ...
 #'   other parameters passed to \code{.fun}
 #'

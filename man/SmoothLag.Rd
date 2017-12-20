@@ -5,8 +5,8 @@
 \alias{SmoothLag}
 \title{Lag Matrix With Applied Smoothing}
 \description{
-An S4 class object for representing a smoothed lag matrix in addition
-to containing details about the basis smoothing. Intended for use within
+An S4 object for representing lag covariates and
+storing details about the basis smoothing. Intended for use within the
 \code{\link{dlm}} modeling framework to assist extraction of basis
 components treated as "fixed" and "random" effects. Inherits from
 \code{matrix}.
@@ -19,11 +19,12 @@ lag and the smoothing parameters used}
 
 \item{\code{.Data}}{Contains the "fixed effects" components of the smoothed lag function.
 This scheme is intended to work conveniently with
-\code{stats::model.matrix}}
+\code{\link[stats]{model.matrix}}}
 
-\item{\code{random}}{Contains the "random effects" components of the smoothed lag function}
+\item{\code{random}}{Contains the random effects or penalized components of the smoothed
+lag function}
 
-\item{\code{terms}}{Character vector contianing the function name and deparsed arguments
+\item{\code{terms}}{Character vector containing the function name and deparsed arguments
 from whatever smoothing function generated the \code{SmoothLag} object}
 }}
 

@@ -4,6 +4,11 @@
 \name{dlMod}
 \alias{dlMod}
 \title{Distributed lag models}
+\description{
+A fitted distributed lag model object. Inherits from \pkg{lme4}'s
+\code{\link[lme4]{merMod}} so that most methods defined for this
+parent class should work seamlessly within \pkg{dlm} analysis
+}
 \section{Slots}{
 
 \describe{

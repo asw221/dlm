@@ -5,7 +5,6 @@
 #' @describeIn omega Method for "\code{LagBasis}" objects
 setMethod("omega", signature = "LagBasis",
           function(object, ...)  cbind(object@C0, object@K1)
-          ## function(object, ...)  cbind(object@K1, object@C0)
           )
 
 
@@ -17,7 +16,7 @@ setMethod("omega", signature = "LagBasis",
 #' @param object A \code{\link{LagBasis}} object
 #'
 #' @description
-#' Not yet implemented
+#' Will update w/ description. Not yet implemented
 #'
 predict.LagBasis <- function(object, x, ...) {
   stop ("Not yet Implemented")

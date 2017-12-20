@@ -10,5 +10,5 @@
 \item{object}{A \code{\link{LagBasis}} object}
 }
 \description{
-Not yet implemented
+Will update w/ description. Not yet implemented
 }

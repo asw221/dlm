@@ -1,8 +1,11 @@
 
+## dlm
+## -------------------------------------------------------------------
 #' @title Distributed lag models
 #'
 #' @description
-#' Fit distributed lag models
+#' Fit distributed lag models using \pkg{lme4} to penalize smooth terms.
+#' Other random effects terms and generalized mixed models supported.
 #'
 #' @usage
 #' dlm(formula, data, subset, na.action, weights, offset,
@@ -10,7 +13,7 @@
 #'     control = list(), ...)
 #'
 #' @param formula
-#'   an object of class \code{"\link[stats]{formula}"}:
+#'   an object of class \code{\link[stats]{formula}}:
 #'   a symbolic description of the model to be fitted. See Details.
 #' @param data
 #'   an optional data frame, list, or environment containing the
@@ -21,54 +24,45 @@
 #' @param na.action
 #'   optional function that indicates what should happen when the data contains
 #'   \code{NA}'s.
+#' @param weights
+#'   optional vector of weights to be used in the fitting process. Should be
+#'   \code{NULL} or a numeric vector
+#' @param offset
+#'   a known offset term to include in the model
 #' @param method
-#'   method used to fit the DLM. Partial matching and capitalization allowed.
+#'   algorithm used to fit the DLM. Partial matching and capitalization allowed
+#' @param family
+#'   a \code{\link[stats]{glm}} family
 #' @param control
-#'   a list of simulation control parameters. See Details.
+#'   a list of simulation control parameters. See Details
 #' @param ...
-#'   Additional parameters passed to \code{\link[lme4]{lFormula}}.
+#'   Additional parameters passed to \code{\link[lme4]{lFormula}}
 #'
 #' @details
-#' Models are specified using familiar R \code{formula} syntax with one set of
+#' Models are specified using typical \pkg{lme4} \code{formula} syntax with
+#' at least one set of
 #' lag terms returned by a given smoothing function (e.g. see \code{\link{cr}}).
 #' The smoothing function can be any that returns a \code{\link{SmoothLag}} basis
-#' object. Multiple lag terms or interactions with lag terms are not allowed, nor
-#' are \code{NA} and missing-value lag terms supported. See Examples
+#' object. See Examples
 #' for a basic call to \code{dlm} using the formula interface, and a cubic
 #' radial lag basis specified via \code{cr}.
+#' Here, we consider models of the general form,
 #'
-#' The \code{control} list specifies additional optional \code{"bayes"} method
-#' arguments, and may include: \code{n.sims}, the total number of simulations
-#' to run (default = 5000); \code{n.save}, the total number of simulations to
-#' save (default = 1000); \code{burnin}, number of simulations to discard from
-#' the start of the chain (default = 2000);
-#' \code{alpha.tau.prior}, prior (shape) parameter
-#'   \eqn{\alpha_{\tau^2}}{\alpha[\tau^2]} (default = 0.1);
-#' \code{beta.tau.prior}, prior (rate) parameter
-#'   \eqn{\beta_{\tau^2}}{\alpha[\tau^2]} (default = 1e-6);
-#' \code{alpha.sigma.prior}, prior (shape) parameter
-#'   \eqn{\alpha_{\sigma^2}}{\alpha[\sigma^2]} (default = 0.1);
-#' \code{beta.sigma.prior}, prior (rate) parameter
-#'   \eqn{\beta_{\sigma^2}}{\beta[\sigma^2]} (default = 1e-6).
+#' \deqn{y_i = \alpha + \sum_{t = 1}^{n^*}} \beta(t) x(t) + \epsilon_i}{y_i = \alpha + \sum_t \beta(t) * x(t) + \epsilon_i}
 #'
-#' The prior distribution heirarchy we assume in the Bayesian
-#' formulation of the DLM is as follows:
+#' where \eqn{t = 1, \ldots, n^*}{t = 1, ..., n^*} indexes a single set of
+#' lag coefficients, \eqn{\beta}. In general, the model can be extended to
+#' include other fixed effects, other sets of lag terms, and random effects.
+#' Above, \eqn{\beta(t)} and \eqn{x(t)} can be thought of as the average linear
+#' effect and concentration of events, respectively, occurring between
+#' two radii, \eqn{r_{t-1}}, and \eqn{r_t} (see References).
 #'
-#' \deqn{y \sim N(D \theta, \sigma^2 I_n)}{y ~ N(D * \theta, \sigma^2 * In)}
-#' \deqn{\theta \sim N(\mu_{\theta}, \Sigma_{\theta})}{\theta ~ N(\mu, \Sigma)}
-#' \deqn{\sigma^2 \sim \mathrm{Inv-Gamma}(\alpha_{\sigma^2}, \frac{1}{\beta_{\sigma^2}})}{\sigma^2 ~ Inv-Gamma(\alpha[\sigma^2], 1 / \beta[\sigma^2])}
-#'
-#' with,
-#' \deqn{\theta_l \sim N(\mu_l, \tau^2)}{\theta(l) ~ N(\mu(l), \tau^2)}
-#' \deqn{\tau^2 \sim \mathrm{Inv-Gamma}(\alpha_{\tau^2}, \frac{1}{\beta_{\tau^2}})}{\tau^2 ~ Inv-Gamma(\alpha[\tau^2], 1 / \beta[\tau^2])}
-#'
-#' where \eqn{l \in L}{l :- L} indexes the set of lag coefficients.
 #'
 #' @return
-#' An S4 object that inherits from \code{"\link[=Dlm-class]{Dlm}"} containing
-#' the results of the fitted model. If construction of this object fails,
-#' \code{dlm} will issue a warning, and as a last resort attempt to return a
-#' list with components of the fitted model.
+#' An S4 object that inherits from \code{\link{dlMod}} and
+#' \code{\link[lme4]{merMod}} containing the results of the fitted model.
+#' Many standard model summary methods are available for these object
+#' types
 #'
 #'
 #' @references Baek J, Sanchez BN, Berrocal BJ, & Sanchez-Vaznaugh EV
@@ -131,7 +125,41 @@ dlm <- function(formula, data, subset, na.action, weights, offset,
 
 
 
-
+## lme4.dlm
+## -------------------------------------------------------------------
+#' @title lme4.dlm
+#'
+#' @description
+#' Fits an interpreted distributed lag model using \pgk{lme4}
+#' \code{\link[lme4]{modular}} functions
+#'
+#' @param parsed
+#'   an interpreted \code{dlm} formula object returned by
+#'   \code{\link{interpret.dlm}}
+#' @param family
+#'   a \code{\link[stats]{glm}} family object. To be passed to the
+#'   \pgk{lme4} \code{\link[lme4]{modular}} family functions
+#' @param control
+#'   either a \code{list} object with arguments to be passed to the
+#'   \code{\link[lme4]{lmerControl}} sequence, or the output of
+#'   \code{[g]lmerConrol} directly
+#' @param REML
+#'   if \code{TRUE} and a linear \code{\link{dlm}} model is specified,
+#'   \code{lme4.dlm} will use REML to fit the model
+#' @param ...
+#'   other parameters to be passed to the \pgk{lme4}
+#'   \code{\link[lme4]{modular}} family functions
+#'
+#' @details
+#' Together with \code{\link{interpret.dlm}}, this function does the
+#' main grunt work for \code{\link{dlm}}. Given an interpreted model,
+#' \code{lme4.dlm} organizes the parsed data into the \pkg{lme4}
+#' \code{\link[lme4]{modular}} functions to fit the model and return
+#' the fit as an \pkg{lme4} object.
+#'
+#' @return an object that inherits from \code{\link[lme4]{merMod}}
+#'   containing a fitted model
+#'
 lme4.dlm <- function(parsed, family = gaussian(),
                      control = list(), REML = FALSE,
                      ...
@@ -214,7 +242,24 @@ lme4.dlm <- function(parsed, family = gaussian(),
 
 
 
-
+## makeDlMod.merMod
+## -------------------------------------------------------------------
+#' @title makeDlMod
+#'
+#' @description
+#' Convert an appropriately fit model object into an object of class
+#' \code{\link{dlMod}}
+#'
+#' @param object
+#'   a fitted model object
+#' @param parsed
+#'   an interpreted \code{dlm} formula object returned by
+#'   \code{\link{interpret.dlm}}
+#' @param call
+#'   an optional matched function call
+#'
+#' @return an S4 object of class \code{\link{dlMod}}
+#'
 makeDlMod.merMod <- function(object, parsed, call, ...) {
   if (!(lme4::isLMM(object) || lme4::isGLMM(object)))
     stop ("Not yet implemented for ", class(object), " objects")

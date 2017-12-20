@@ -24,18 +24,16 @@ to apply the linear basis transformation to.
 An S4 object of class \code{\link{SmoothBasis}}.
 }
 \description{
-UPDATE!
-
-Construct a natural cubic radial basis set for a given
-lag vector and apply as a linear transformation of a
+Construct a set of basis vectors for distances between distributed
+lag points, and apply as a linear transformation of a
 concentration matrix.
 }
 \details{
-\code{cr} is little more than a convenient
-  wrapper to the function \code{\link{basis}} and the
-  \code{\link{SmoothLag}} class constructor. It is intended to
+These functions are little more than convenient
+  wrappers to the function \code{\link{basis}} and the
+  \code{\link{SmoothLag}} class constructor. They are intended to
   simplify the task of specifying lag terms in a model \code{formula}.
-  The function computes a set of natural cubic basis vectors for
+  The functions computes a set of basis vectors for
   parameter \code{x} and applies this basis as a linear transformation
   of the covariate/concentration matrix parameter, \code{Z}. For example,
   if \code{Z} is the identity matrix, the model fit will simply be
@@ -52,7 +50,7 @@ concentration matrix.
 }}
 
 \examples{
-## load simulated data and extract concentration matrix
+## load simulated data set and extract concentration matrix
 data (simdata)
 Conc <- simdata[, -(1:3)]  # First columns are Y, Age, and Gender
 

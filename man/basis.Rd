@@ -4,8 +4,7 @@
 \alias{basis}
 \title{Basis vector sets}
 \usage{
-basis(x, center = TRUE, scale = FALSE, ...,
-      .fun = function(x, ...) abs(outer(x, x, "-"))^3)
+basis(x, center = TRUE, scale = FALSE, .fun = NULL, ...)
 }
 \arguments{
 \item{x}{a set of points to measure distances between; the resultant
@@ -19,22 +18,23 @@ centered prior to computing distances. Otherwise, if given a
 will be scaled by \code{sd(x)}. Otherwise, if given a
 \code{numeric} value, \code{x} will be scaled by \code{scale}}
 
-\item{...}{other parameters passed to \code{.fun}}
+\item{.fun}{a function to compute distances between the values in \code{x}.
+The default is to compute pairwise cubed absolute distances. See
+Details}
 
-\item{.fun}{a function to compute the distances between the values in \code{x}.
-The default is to compute pairwise cubed absolute distances}
+\item{...}{other parameters passed to \code{.fun}}
 }
 \value{
 An object of class \code{\link{LagBasis}}
 }
 \description{
 Construct a set of basis vectors based on the distances between
-input points
+input points.
 
 Users should not typically interact with \code{basis} directly.
 Typical usage relies on calling basis application functions, like
-\code{\link{cr}}, directly and/or in \code{\link{dlm}} model
-formulae
+\code{\link{cr}} (e.g. in \code{\link{dlm}} model
+formulas).
 }
 \details{
 Alternative distance functions, \code{.fun}, may be specified, and
@@ -51,18 +51,20 @@ In addition, new distance function definitions should follow the idiom:
   }
 }
 
-The distance matrix decomposition follows Rupert, Wand, and Carroll
-(2003). In particular, once \code{x} and \code{.fun} are chosen and
-we define distance matrix \code{C_1 = .fun(x, ...)}, and we let
+The default value of \code{.fun} computes cubic radial distance,
+which amounts to \code{abs(outer(x, y, "-"))^3}; distance matrix
+decomposition follows Rupert, Wand, and Carroll
+(2003). In particular, once \code{x} and \code{.fun} are chosen,
+define distance matrix \code{C_1 = .fun(x, ...)}, and let
 
-\deqn{C_0 = [1^{(n \times 1)}, x]}{C[0] = [1, x]}
-\deqn{C_1 = Q R}{C[1] = Q * R}
-\deqn{M_1 = Q_{-(1:2)}}{M[1] = Q[-(1:2)]}
-\deqn{K_1 = C_1 M_1 (M_1^T C_1 M_1)^{-\frac{1}{2}}}{K[1] = C[1] * M[1] * (M[1]' * C[1] * M[1])^-0.5}
+\deqn{C_0 = [1^{(n \times 1)}, x]}{C_0 = [1, x]}
+\deqn{C_1 = Q R}{C_1 = Q * R}
+\deqn{M_1 = Q_{-(1:2)}}{M_1 = Q[-(1:2)]}
+\deqn{K_1 = C_1 M_1 (M_1^T C_1 M_1)^{-\frac{1}{2}}}{K_1 = C_1 * M_1 * (M_1' * C_1 * M_1)^-0.5}
 
 where \eqn{A_{-j}}{A[-j]} denotes a matrix \eqn{A} with column(s) \eqn{j}
-removed. Then we are interested in estimating effects scaled by the
-matrix \eqn{\Omega = [C_0, K_1]}{\Omega = [C[0], K[1]]}
+removed. Then distributed lag effects of interest are scaled by the
+matrix \eqn{\Omega = [C_0, K_1]}{\Omega = [C_0, K_1]}
 }
 \references{
 Rupert D, Wand MP, & Carroll RJ (2003) Semiparametric
