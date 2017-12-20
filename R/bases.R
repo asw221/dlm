@@ -8,11 +8,10 @@
 #' @description
 #' Construct a set of basis vectors based on the distances between
 #' input points.
-#'
-#' Users should not typically interact with \code{basis} directly.
 #' Typical usage relies on calling basis application functions, like
 #' \code{\link{cr}} (e.g. in \code{\link{dlm}} model
-#' formulas).
+#' formulas); users should not often have to interact with \code{basis}
+#' directly
 #'
 #' @usage
 #' basis(x, center = TRUE, scale = FALSE, .fun = NULL, ...)
@@ -43,12 +42,12 @@
 #' are typically non-negative.
 #'
 #' In addition, new distance function definitions should follow the idiom:
-#' \code{
-#'   function(x, y, ...) {
-#'     if (missing(y))  y <- x
-#'     ...
-#'   }
-#' }
+#'
+#' \code{function(x, y, ...)}
+#'
+#' \code{  if (missing(y))  y <- x}
+#'
+#' \code{  ...}
 #'
 #' The default value of \code{.fun} computes cubic radial distance,
 #' which amounts to \code{abs(outer(x, y, "-"))^3}; distance matrix

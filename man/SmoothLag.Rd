@@ -19,7 +19,7 @@ lag and the smoothing parameters used}
 
 \item{\code{.Data}}{Contains the "fixed effects" components of the smoothed lag function.
 This scheme is intended to work conveniently with
-\code{\link[stats]{model.matrix}}}
+\code{stats::\link[stats]{model.matrix}}}
 
 \item{\code{random}}{Contains the random effects or penalized components of the smoothed
 lag function}

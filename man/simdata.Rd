@@ -20,7 +20,7 @@ simdata[1:10, 1:5]
 
 }
 \references{
-Baek J, Sanchez BN, Berrocal BJ, & Sanchez-Vaznaugh EV
+Baek J, Sanchez BN, Berrocal VJ, & Sanchez-Vaznaugh EV
 (2016) Epidemiology 27(1):116-24.
 (\href{https://www.ncbi.nlm.nih.gov/pubmed/26414942}{PubMed})
 

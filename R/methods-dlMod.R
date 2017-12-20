@@ -1,6 +1,6 @@
 
 
-#' @describeIn vcoef S4 Method for \code{"\link[=dlMod]{dlMod}"} Objects
+#' @describeIn vcoef S4 Method for \code{\link[=dlMod]{dlMod}} objects
 setMethod("vcoef0", signature = "dlMod",
           function(object, scaled = TRUE, ...) {
             z <- c(lme4::getME(object, "beta"),
@@ -9,7 +9,7 @@ setMethod("vcoef0", signature = "dlMod",
             if (scaled) c(as.matrix(scaleMat(object) %*% z)) else z
           })
 
-#' @describeIn vcoef S4 Method for \code{"\link[=dlMod]{dlMod}"} Objects
+#' @describeIn vcoef S4 Method for \code{\link[=dlMod]{dlMod}} objects
 setMethod("vcoef", signature = "dlMod",
           function(object, scaled = TRUE, ...) {
             z <- vcoef0(object, scaled = scaled)
@@ -37,7 +37,7 @@ setMethod("vcoef", signature = "dlMod",
           })
 
 
-#' @describeIn scaleMat S4 Method for \code{"\link[=dlMod]{dlMod}"} Objects
+#' @describeIn scaleMat S4 Method for \code{\link[=dlMod]{dlMod}} objects
 setMethod("scaleMat", signature = "dlMod",
           function(object, ...) {
             pq <- unlist(lme4::getME(object, c("p", "q")))
@@ -50,8 +50,8 @@ setMethod("scaleMat", signature = "dlMod",
 
 
 
-
-setMethod("cholfVar", signature = "dlMod",
+#' @describeIn cholfVar S4 Method for \code{lme4::\link[lme4]{merMod}} objects
+setMethod("cholfVar", signature = "merMod",
   function(object, ...) {
     p <- lme4::getME(object, "p")
     q <- lme4::getME(object, "q")

@@ -13,30 +13,40 @@
 #'     control = list(), ...)
 #'
 #' @param formula
-#'   an object of class \code{\link[stats]{formula}}:
-#'   a symbolic description of the model to be fitted. See Details.
+#'   an object of class \code{stats::\link[stats]{formula}}:
+#'   a symbolic description of the model to be fitted. See Details
 #' @param data
 #'   an optional data frame, list, or environment containing the
-#'   variables of the fitted model.
+#'   variables of the model to be fitted
 #' @param subset
 #'   optional vector specifying a subset of observations to be used in the
-#'   fitting process.
+#'   fitting process
 #' @param na.action
 #'   optional function that indicates what should happen when the data contains
-#'   \code{NA}'s.
+#'   \code{NA}'s. The default is set by the \code{na.action} setting of
+#'   \code{base::\link[base]{options}}, usually
+#'   \code{stats::\link[stats]{na.omit}}
 #' @param weights
 #'   optional vector of weights to be used in the fitting process. Should be
 #'   \code{NULL} or a numeric vector
 #' @param offset
-#'   a known offset term to include in the model
+#'   a known offset term to include in the model, e.g. for \code{poisson()}
+#'   family models
 #' @param method
-#'   algorithm used to fit the DLM. Partial matching and capitalization allowed
+#'   algorithm used to fit the DLM. Partial matching and capitalization allowed.
+#'   The default is \code{"REML"} for linear/\code{gaussian(link = "identity")}
+#'   family models, and \code{"MLE"} otherwise
 #' @param family
-#'   a \code{\link[stats]{glm}} family
+#'   a description of the error distribution and link function to be used
+#'   in the model. The default is \code{gaussian(link = "identity")}.
+#'   See \code{stats::\link[stats]{family}} for possible family
+#'   functions and details
 #' @param control
-#'   a list of simulation control parameters. See Details
+#'   either a \code{list} object with arguments to be passed to the
+#'   \code{lme4::\link[lme4]{lmerControl}} sequence, or the output of
+#'   \code{[g]lmerConrol} directly
 #' @param ...
-#'   Additional parameters passed to \code{\link[lme4]{lFormula}}
+#'   Additional parameters passed to \code{lme4::\link[lme4]{lFormula}}
 #'
 #' @details
 #' Models are specified using typical \pkg{lme4} \code{formula} syntax with
@@ -46,9 +56,10 @@
 #' object. See Examples
 #' for a basic call to \code{dlm} using the formula interface, and a cubic
 #' radial lag basis specified via \code{cr}.
+#'
 #' Here, we consider models of the general form,
 #'
-#' \deqn{y_i = \alpha + \sum_{t = 1}^{n^*}} \beta(t) x(t) + \epsilon_i}{y_i = \alpha + \sum_t \beta(t) * x(t) + \epsilon_i}
+#' \deqn{y_i = \alpha + \sum_{t = 1}^{n^*} \beta(t) x(t) + \epsilon_i}{y_i = \alpha + \sum_t \beta(t) * x(t) + \epsilon_i}
 #'
 #' where \eqn{t = 1, \ldots, n^*}{t = 1, ..., n^*} indexes a single set of
 #' lag coefficients, \eqn{\beta}. In general, the model can be extended to
@@ -60,12 +71,12 @@
 #'
 #' @return
 #' An S4 object that inherits from \code{\link{dlMod}} and
-#' \code{\link[lme4]{merMod}} containing the results of the fitted model.
+#' \code{lme4::\link[lme4]{merMod}} containing the results of the fitted model.
 #' Many standard model summary methods are available for these object
 #' types
 #'
 #'
-#' @references Baek J, Sanchez BN, Berrocal BJ, & Sanchez-Vaznaugh EV
+#' @references Baek J, Sanchez BN, Berrocal VJ, & Sanchez-Vaznaugh EV
 #' (2016) Epidemiology 27(1):116-24.
 #' (\href{https://www.ncbi.nlm.nih.gov/pubmed/26414942}{PubMed})
 #'
@@ -89,7 +100,7 @@
 #' fit <- dlm(Y ~ Age + Gender + cr(lag, X), data = simdata)
 #' summary (fit)
 #'
-#' @seealso \code{\link[lme4]{lmer}}, \code{\link{cr}},
+#' @seealso \code{lme4::\link[lme4]{lmer}}, \code{\link{cr}},
 #'   \code{\link{dlMod}}
 #'
 
@@ -130,34 +141,37 @@ dlm <- function(formula, data, subset, na.action, weights, offset,
 #' @title lme4.dlm
 #'
 #' @description
-#' Fits an interpreted distributed lag model using \pgk{lme4}
+#' Fits an interpreted distributed lag model using \pkg{lme4}
 #' \code{\link[lme4]{modular}} functions
 #'
 #' @param parsed
 #'   an interpreted \code{dlm} formula object returned by
 #'   \code{\link{interpret.dlm}}
 #' @param family
-#'   a \code{\link[stats]{glm}} family object. To be passed to the
-#'   \pgk{lme4} \code{\link[lme4]{modular}} family functions
+#'   a description of the error distribution and link function to be used
+#'   in the model. The default is \code{gaussian(link = "identity")}.
+#'   See \code{stats::\link[stats]{family}} for possible family
+#'   functions and details
 #' @param control
 #'   either a \code{list} object with arguments to be passed to the
-#'   \code{\link[lme4]{lmerControl}} sequence, or the output of
+#'   \code{lme4::\link[lme4]{lmerControl}} sequence, or the output of
 #'   \code{[g]lmerConrol} directly
 #' @param REML
 #'   if \code{TRUE} and a linear \code{\link{dlm}} model is specified,
-#'   \code{lme4.dlm} will use REML to fit the model
+#'   \code{lme4.dlm} will use REML to fit the model. MLE will be
+#'   use otherwise
 #' @param ...
-#'   other parameters to be passed to the \pgk{lme4}
+#'   other parameters to be passed to the \pkg{lme4}
 #'   \code{\link[lme4]{modular}} family functions
 #'
 #' @details
 #' Together with \code{\link{interpret.dlm}}, this function does the
 #' main grunt work for \code{\link{dlm}}. Given an interpreted model,
 #' \code{lme4.dlm} organizes the parsed data into the \pkg{lme4}
-#' \code{\link[lme4]{modular}} functions to fit the model and return
+#' \code{\link[lme4]{modular}} functions to fit the model and returns
 #' the fit as an \pkg{lme4} object.
 #'
-#' @return an object that inherits from \code{\link[lme4]{merMod}}
+#' @return an object that inherits from \code{lme4::\link[lme4]{merMod}}
 #'   containing a fitted model
 #'
 lme4.dlm <- function(parsed, family = gaussian(),
@@ -260,6 +274,7 @@ lme4.dlm <- function(parsed, family = gaussian(),
 #'
 #' @return an S4 object of class \code{\link{dlMod}}
 #'
+#' @name makeDlMod
 makeDlMod.merMod <- function(object, parsed, call, ...) {
   if (!(lme4::isLMM(object) || lme4::isGLMM(object)))
     stop ("Not yet implemented for ", class(object), " objects")

@@ -67,7 +67,7 @@ LagBasis <- setClass("LagBasis",
 #' @slot .Data
 #'   Contains the "fixed effects" components of the smoothed lag function.
 #'   This scheme is intended to work conveniently with
-#'   \code{\link[stats]{model.matrix}}
+#'   \code{stats::\link[stats]{model.matrix}}
 #'
 #' @slot random
 #'   Contains the random effects or penalized components of the smoothed
@@ -101,8 +101,8 @@ SmoothLag <- setClass("SmoothLag",
 #' parent class should work seamlessly within \pkg{dlm} analysis
 #'
 #' @slot resp
-#'   An \code{\link[lme4]{lmResp}} object to store a
-#'   mixed-model response variable
+#'   An \code{lme4::\link[lme4]{lmResp}} object to store a
+#'   (mixed) model response variable
 #' @slot bases
 #'   A list of \code{\link{LagBasis}} objects corresponding
 #'   to the unique set of lag bases used to fit the model

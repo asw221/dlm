@@ -12,8 +12,8 @@ parent class should work seamlessly within \pkg{dlm} analysis
 \section{Slots}{
 
 \describe{
-\item{\code{resp}}{An \code{\link[lme4]{lmResp}} object to store a
-mixed-model response variable}
+\item{\code{resp}}{An \code{lme4::\link[lme4]{lmResp}} object to store a
+(mixed) model response variable}
 
 \item{\code{bases}}{A list of \code{\link{LagBasis}} objects corresponding
 to the unique set of lag bases used to fit the model}

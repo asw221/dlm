@@ -22,12 +22,13 @@ There should not be a need to alter this in normal use cases}
 an S3 object of class \code{"parsed.dlm"} with list elements:
 \describe{
   \item{\code{formula}}{the formula passed to \code{\link{dlm}}}
-  \item{\code{lme4.formula}}{a reconstructed formula that \code{lme4} sees}
+  \item{\code{lme4.formula}}{a reconstructed formula that is then passed
+    to the \pkg{lme4} \code{\link[lme4]{modular}} functions}
   \item{\code{model}}{a \code{data.frame} returned by call to
-    \code{\link[stats]{model.frame}}}
+    \code{stats::\link[stats]{model.frame}}}
   \item{\code{Bt}}{a matrix of the random or penalized lag basis vectors,
     where each vector is a row. Stored as an object that inherits from
-    \code{\link[Matrix]{dMatrix}}}
+    \code{Matrix::\link[Matrix]{dMatrix}}}
   \item{\code{bases}}{a list of all the unique bases represented in the
     \code{formula}. This may be \eqn{<=} the number of separate spline-lag
     terms. All elements should inherit from \code{\link{SmoothLag}}}
@@ -50,7 +51,7 @@ available smooth lag terms.
 Users should not typically have to interact with \code{interpret.dlm}
 directly, but it may be useful for extensions.
 
-Uses \code{R}'s \code{\link[stats]{model.matrix}} mechanisms to build
+Uses \code{R}'s \code{stats::\link[stats]{model.matrix}} mechanisms to build
 and parse the random effects (or penalized) components of spline-lag terms
 in the model. The object returned is later passed to other \pkg{dlm}
 functions in order to fit the specified model.
