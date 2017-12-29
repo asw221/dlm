@@ -56,7 +56,7 @@
 #' where \eqn{Z_i} is another covariate, can be included. The interaction
 #' coefficients \eqn{\theta(r_{l-1}; r_l)}  have the
 #' usual interpretation, but the magnitude of the interaction can vary over
-#' distance from locations of interest; \theta(r_{l-1}; r_l) are also
+#' distance from locations of interest; \eqn{\theta(r_{l-1}; r_l)} are also
 #' constrained using smoothing splines. Finally, weighted regression models
 #' are also supported.
 #'
