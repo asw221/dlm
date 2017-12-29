@@ -8,13 +8,6 @@ makeDlMod <- function(object, ...) UseMethod("makeDlMod", object)
 
 
 
-## cholfVar
-## -------------------------------------------------------------------
-#' @title Extract Cholesky factor of inverse Information matrix
-#' @name cholfVar
-setGeneric("cholfVar", function(object, ...) standardGeneric("cholfVar"))
-
-
 ## Sigma
 ## -------------------------------------------------------------------
 #' @title Extract model coefficients variance matrix
@@ -45,7 +38,6 @@ setGeneric("vcoef0", function(object, ...) standardGeneric("vcoef0"))
 setGeneric("lagIndex", function(object, ...) standardGeneric("lagIndex"))
 
 
-
 ## scaleMat
 ## -------------------------------------------------------------------
 #' @title Extract Distributed Lag Scale Matrix
@@ -68,8 +60,6 @@ setGeneric("scaleMat",
            )
 
 
-
-
 ## changePoint
 ## -------------------------------------------------------------------
 #' @title Lag Coefficient Change Points
@@ -77,11 +67,6 @@ setGeneric("scaleMat",
 #' @return An integer vector
 #' @name changePoint
 setGeneric("changePoint", function(object, ...) standardGeneric("changePoint"))
-
-
-
-
-
 
 
 ## omega
@@ -100,4 +85,26 @@ setGeneric("changePoint", function(object, ...) standardGeneric("changePoint"))
 #' @name omega
 setGeneric("omega", function(object, ...) standardGeneric("omega"))
 
+
+
+
+## cholfVar
+## -------------------------------------------------------------------
+#' @title Extract Cholesky factor of inverse Information matrix
+#' @name cholfVar
+setGeneric("cholfVar", function(object, ...) standardGeneric("cholfVar"))
+
+#' @describeIn cholfVar S4 Method for \code{lme4::\link[lme4]{merMod}} objects
+setMethod("cholfVar", signature = "merMod",
+  function(object, ...) {
+    p <- lme4::getME(object, "p")
+    q <- lme4::getME(object, "q")
+    RZi <- t(solve(lme4::getME(object, "L"), Matrix::Diagonal(q), "L"))
+    RXi <- solve(lme4::getME(object, "RX"))
+    RZXi <- -RZi %*% lme4::getME(object, "RZX") %*% RXi
+    Lambda <- lme4::getME(object, "Lambda")
+    L <- Matrix::bdiag(RXi, Lambda %*% RZi)
+    L[(p + 1):nrow(L), 1:p] <- Lambda %*% RZXi
+    sigma(object) * L
+  })
 

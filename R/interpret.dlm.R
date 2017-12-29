@@ -86,7 +86,9 @@ interpret.dlm <- function(formula, data,
     stop ("Interactions between lag terms are not allowed")
 
   ##
-  lag.formula <- reformulate(attr(drop.terms(mt, which(nlag == 0)), "term.labels"))
+  lag.formula <- if (any(nlag == 0))
+      reformulate(attr(drop.terms(mt, which(nlag == 0)), "term.labels"))
+    else formula
   Bt <- as(t(model.matrix(lag.formula, mf.lag)), "sparseMatrix")
   if (attr(mt, "intercept"))
     Bt <- Bt[-1L, , drop = FALSE]

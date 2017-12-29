@@ -1,6 +1,10 @@
 
 #' @title Extract DLM parameter estimates
 #'
+#' @param object
+#'   a fitted \code{\link{dlMod}} object
+#' @param scaled
+#'   if \code{TRUE}, any lag coefficients are scaled
 #'
 #' @name estimands
 NULL
