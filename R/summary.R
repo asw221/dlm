@@ -96,6 +96,7 @@ print.summary.dlMod <- function(x,
   .prt.grps(x$ngrps, nobs = x$devcomp$dims[["n"]])
 
   p <- nrow(x$coefficients)
+  ## find index of non-lag covariates (ic)
   ic <- parse.names(x$lag.names, rownames(x$coefficients), .warn = FALSE)[""]
   if (p > 0 && length(ic) > 0) {
     cat("\nFixed effects:\n")
@@ -138,11 +139,9 @@ print.summary.dlMod <- function(x,
           corf <- matrix(format(round(corF@x, 3), nsmall = 3),
                          ncol = p,
                          dimnames = list(rns, abbreviate(rn, minlength = 6)))
-          if (!is.na(ic)) {
-            corf <- corf[ic, ic]
-            corf[!lower.tri(corf)] <- ""
-            print(corf[-1, -NCOL(corf), drop = FALSE], quote = FALSE)
-          }
+          corf <- corf[ic, ic, drop = FALSE]
+          corf[!lower.tri(corf)] <- ""
+          print(corf[-1, -NCOL(corf), drop = FALSE], quote = FALSE)
         } ## !symbolic.cor
       }  ## if (p > 1)
     } ## if (correlation)
