@@ -53,7 +53,6 @@
 #'     \code{bi} keeps track of that matching}
 #' }
 #'
-
 interpret.dlm <- function(formula, data,
   .names.func = function(n) paste("pseudoGroups", n, sep = "")
 ) {

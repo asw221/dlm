@@ -22,8 +22,8 @@ Extract fixed and random effects coefficient vector,
 }
 \section{Methods (by class)}{
 \itemize{
-\item \code{dlMod}: S4 Method for \code{"\link[=dlMod]{dlMod}"} Objects
+\item \code{dlMod}: S4 Method for \code{\link[=dlMod]{dlMod}} objects
 
-\item \code{dlMod}: S4 Method for \code{"\link[=dlMod]{dlMod}"} Objects
+\item \code{dlMod}: S4 Method for \code{\link[=dlMod]{dlMod}} objects
 }}
 

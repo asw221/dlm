@@ -63,11 +63,11 @@ are also supported.
 We assume the user has calculated distances from every participant’s
 location to every community resource/feature. The distances can be network
 distances or Euclidian distances. Those distances are then used to calculate
-the distributed lag covariates, X(r_{l-1}; r_l), by specifying \eqn{L} and
-the radii \eqn{r_l}, \eqn{l = 1, 2, \ldots, L}{l = 1, 2, ..., L}.
+the distributed lag covariates, \eqn{X(r_{l-1}; r_l)}, by specifying \eqn{L}
+and the radii \eqn{r_l}, \eqn{l = 1, 2, \ldots, L}{l = 1, 2, ..., L}.
 See Baek et al (2016) for guidance on choosing \eqn{L} and \eqn{r}.
 
-The package include a series of functions to pass formulas and data to
+The package includes a series of functions to pass formulas and data to
 \pkg{lme4}, which is used for estimation of the DLM. All those functions are
 documented in this manual, although a typical user will primarily interact
 with XXX, xxx, and xxx. For example:
