@@ -10,11 +10,16 @@ omega(object, ...)
 
 \S4method{omega}{LagBasis}(object, ...)
 }
+\arguments{
+\item{object}{An object storing details of the basis decomposition}
+
+\item{...}{additional arguments}
+}
 \value{
 A square numeric matrix
 }
 \description{
-Extract lag basis matrix, \eqn{\Omega}
+Extract lag basis matrix, \eqn{\Omega}.
 }
 \details{
 \code{omega} is S4 generic.
@@ -23,4 +28,21 @@ Extract lag basis matrix, \eqn{\Omega}
 \itemize{
 \item \code{LagBasis}: Method for "\code{LagBasis}" objects
 }}
+
+\section{Decomposition}{
+
+Once a distance function (\eqn{\delta(\cdot, \cdot)}{\delta()}) and
+radii (\eqn{r}) are chosen, define distance matrix,
+\eqn{C_{1, ij} = \delta(r_i, r_j)}{C_1[i, j] = \delta(r_i, r_j)},
+and let,
+
+\deqn{C_0 = [1^{(n \times 1)}, r]}{C_0 = [1, r]}
+\deqn{C_1 = Q R}{C_1 = Q * R}
+\deqn{M_1 = Q_{-(1:2)}}{M_1 = Q[-(1:2)]}
+\deqn{K_1 = C_1 M_1 (M_1^T C_1 M_1)^{-\frac{1}{2}}}{K_1 = C_1 * M_1 * (M_1' * C_1 * M_1)^-0.5}
+
+where \eqn{A_{-j}}{A[-j]} denotes a matrix \eqn{A} with column(s) \eqn{j}
+removed. Then distributed lag effects of interest are scaled by the
+matrix \eqn{\Omega = [C_0, K_1]}{\Omega = [C_0, K_1]}
+}
 

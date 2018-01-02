@@ -3,78 +3,95 @@
 ## is.SmoothLag <- function(object, ...) inherits(object, "SmoothLag")
 ## is.dlMod <- function(object, ...)     inherits(object, "dlMod")
 
-
 makeDlMod <- function(object, ...) UseMethod("makeDlMod", object)
 
 
 
-## Sigma
-## -------------------------------------------------------------------
-#' @title Extract model coefficients variance matrix
-#' @name Sigma
+#' @title Extract DLM parameter estimates
+#'
+#' @description Extract regression coefficients, variances, etc. from
+#' fitted \code{\link{dlMod}} objects
+#'
+#' @param object
+#'   a fitted \code{\link{dlMod}} object
+#' @param scaled
+#'   if \code{TRUE} (the default), any lag parameters are scaled for
+#'   more natural interpretation (see Details)
+#' @param ...
+#'   additional arguments
+#'
+#' @details
+#' Other typical methods like
+#' \code{residuals}, and \code{sigma}, etc. are handled via inheritance
+#' from \pkg{lme4} classes.
+#' If the argument \code{scaled = TRUE}, parameter estimates are scaled
+#' by the areas between radii and summed so that they can be interpreted
+#' as the estimate up to a given radius (e.g. see the \pkg{dlmBE}
+#' \link[=dlmBE-package]{package documentation}).
+#'
+#' \describe{
+#'   \item{\code{coef.dlMod}}{follows the format of
+#'     \code{lme4::\link[lme4]{coef.merMod}} to return the sums of fixed
+#'     and random effects for each level and grouping factor}
+#'   \item{\code{confint.dlMod}}{returns confidence intervals for regression
+#'     coefficients following \code{stats::\link[stats]{confint}}}
+#'   \item{\code{Sigma}}{returns the regression coefficient covariance matrix.
+#'     Row and column indices are in the same order as \code{vcoef} (see below)}
+#'   \item{\code{vcoef}}{returns vectorized coefficients from the fitted
+#'     model. Fixed effects come before distributed lag coefficients, which
+#'     come before other random effects coefficients. For example, if
+#'     \eqn{\beta} is a vector of fixed effects; \eqn{\theta_1} and
+#'     \eqn{\theta_2} are vectors of (separately penalized) DL coefficients;
+#'     and \eqn{b_1}, \eqn{b_2}, \eqn{\ldots}{...} are additional random
+#'     effects vectors for groups \eqn{1, 2, \ldots}{1, 2, ...}, then
+#'     \code{vcoef} will return the (named) vector
+#'     \eqn{(\beta^T, \theta_1^T, \theta_2^T, b_1^T, b_2^T, \ldots)^T}{(\beta', \theta_1', \theta_2', b_1', b_2', ...)'}.
+#'     \code{vcoef0} returns the same coefficient vector
+#'     but without names (and is slightly faster).}
+#' }
+#'
+#' @return All of these functions return \code{numeric} data
+#'
+#' @name estimands
+NULL
+
+
+#' @rdname estimands
 setGeneric("Sigma", function(object, ...) standardGeneric("Sigma"))
 
-
-## vcoef
-## -------------------------------------------------------------------
-#' @title Vectorized coefficients
-#'
-#' @description
-#' Extract fixed and random effects coefficient vector,
-#' \eqn{(\beta, b)'} from a fitted \code{\link{dlMod}} object
-#'
-#'
-#' @return A numeric vector: with variable names in the case of \code{vcoef}
-#'
-#' @name vcoef
+#' @rdname estimands
 setGeneric("vcoef", function(object, ...) standardGeneric("vcoef"))
+
+#' @rdname estimands
 setGeneric("vcoef0", function(object, ...) standardGeneric("vcoef0"))
 
 
-## lagIndex
-## -------------------------------------------------------------------
-#' @title Extract list of indices of lag terms
-#' @name lagIndex
+
+#' @rdname lagIndex
 setGeneric("lagIndex", function(object, ...) standardGeneric("lagIndex"))
 
-
-## scaleMat
-## -------------------------------------------------------------------
-#' @title Extract Distributed Lag Scale Matrix
-#'
-#' @description
-#' Return lag coefficient scale matrix, S, such that the distributed lag
-#' coefficients fit by the model are obtained via the transformation
-#' \eqn{\beta = S \theta}{\beta = S * \theta}. S should be invertable.
-#'
-#' @param object a fitted model object
-#'
-#' @return A square numeric matrix
-#'
-#' @details
-#' \code{scaleMat} is S4 generic.
-#'
-#' @name scaleMat
+#' @rdname scaleMat
 setGeneric("scaleMat",
            function(object, ...) standardGeneric("scaleMat")
            )
 
-
-## changePoint
-## -------------------------------------------------------------------
-#' @title Lag Coefficient Change Points
-#'
-#' @return An integer vector
-#' @name changePoint
+#' @rdname changePoint
 setGeneric("changePoint", function(object, ...) standardGeneric("changePoint"))
+
 
 
 ## omega
 ## -------------------------------------------------------------------
 #' @title Extract Lag Basis Matrix
+#' @inheritSection basis Decomposition
 #'
 #' @description
-#' Extract lag basis matrix, \eqn{\Omega}
+#' Extract lag basis matrix, \eqn{\Omega}.
+#'
+#' @param object
+#'   An object storing details of the basis decomposition
+#' @param ...
+#'   additional arguments
 #'
 #' @return
 #' A square numeric matrix
@@ -91,10 +108,32 @@ setGeneric("omega", function(object, ...) standardGeneric("omega"))
 ## cholfVar
 ## -------------------------------------------------------------------
 #' @title Extract Cholesky factor of inverse Information matrix
+#'
+#' Computes the Cholesky factor, \eqn{L}, of the inverse of the
+#' Fisher Information matrix for all regression coefficients in
+#' a fitted model. The coefficient covariance matrix can then be
+#' computed as \eqn{L L^T}{L * L'}.
+#'
+#' @param object
+#'   a fitted model object
+#' @param ...
+#'   additional arguments
+#'
+#' @return A square numeric matrix represented as a
+#' \code{Matrix::\link[Matrix]{sparseMatrix}} object
+#'
 #' @name cholfVar
 setGeneric("cholfVar", function(object, ...) standardGeneric("cholfVar"))
 
-#' @describeIn cholfVar S4 Method for \code{lme4::\link[lme4]{merMod}} objects
+
+#' @section Method for 'lme4::merMod' objects:
+#' For a mixed-effects model of the form, for example,
+#' \deqn{g(E(Y_i | b_i)) = X \beta + Z_i b_i}{g(E(Y_i | b_i)) = X * \beta + Z_i * b_i}
+#' with link function \eqn{g(\cdot)}{g()}, and
+#' \eqn{b_i \sim \mathrm{N}(0, \Sigma_b)}{b_i ~ N(0, \Sigma_b)}, the Cholesky
+#' factor returned will be for \eqn{I^{-1}(\theta)}{I^-1(\theta)}, where
+#' \eqn{\theta = (\beta^T, b_1^T, B_2^T, \ldots)^T}{\theta = (\beta', b_1', b2', ...)'}.
+#' @rdname cholfVar
 setMethod("cholfVar", signature = "merMod",
   function(object, ...) {
     p <- lme4::getME(object, "p")

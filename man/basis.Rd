@@ -7,7 +7,7 @@
 basis(x, center = TRUE, scale = FALSE, .fun = NULL, ...)
 }
 \arguments{
-\item{x}{a set of points to measure distances between; the resultant
+\item{x}{a vector or radii; the resultant
 distance matrix will be decomposed into a set of basis vectors}
 
 \item{center}{if \code{TRUE} (the default), parameter \code{x} will be mean
@@ -33,7 +33,7 @@ input points.
 Typical usage relies on calling basis application functions, like
 \code{\link{cr}} (e.g. in \code{\link{dlm}} model
 formulas); users should not often have to interact with \code{basis}
-directly
+directly.
 }
 \details{
 Alternative distance functions, \code{.fun}, may be specified, and
@@ -53,10 +53,16 @@ In addition, new distance function definitions should follow the idiom:
 The default value of \code{.fun} computes cubic radial distance,
 which amounts to \code{abs(outer(x, y, "-"))^3}; distance matrix
 decomposition follows Rupert, Wand, and Carroll
-(2003). In particular, once \code{x} and \code{.fun} are chosen,
-define distance matrix \code{C_1 = .fun(x, ...)}, and let
+(2003).
+}
+\section{Decomposition}{
 
-\deqn{C_0 = [1^{(n \times 1)}, x]}{C_0 = [1, x]}
+Once a distance function (\eqn{\delta(\cdot, \cdot)}{\delta()}) and
+radii (\eqn{r}) are chosen, define distance matrix,
+\eqn{C_{1, ij} = \delta(r_i, r_j)}{C_1[i, j] = \delta(r_i, r_j)},
+and let,
+
+\deqn{C_0 = [1^{(n \times 1)}, r]}{C_0 = [1, r]}
 \deqn{C_1 = Q R}{C_1 = Q * R}
 \deqn{M_1 = Q_{-(1:2)}}{M_1 = Q[-(1:2)]}
 \deqn{K_1 = C_1 M_1 (M_1^T C_1 M_1)^{-\frac{1}{2}}}{K_1 = C_1 * M_1 * (M_1' * C_1 * M_1)^-0.5}
@@ -65,6 +71,7 @@ where \eqn{A_{-j}}{A[-j]} denotes a matrix \eqn{A} with column(s) \eqn{j}
 removed. Then distributed lag effects of interest are scaled by the
 matrix \eqn{\Omega = [C_0, K_1]}{\Omega = [C_0, K_1]}
 }
+
 \references{
 Rupert D, Wand MP, & Carroll RJ (2003) Semiparametric
 Regression. New York: Cambridge University Press.

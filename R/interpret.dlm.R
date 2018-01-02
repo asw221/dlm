@@ -41,8 +41,9 @@
 #'     where each vector is a row. Stored as an object that inherits from
 #'     \code{Matrix::\link[Matrix]{dMatrix}}}
 #'   \item{\code{bases}}{a list of all the unique bases represented in the
-#'     \code{formula}. This may be \eqn{<=} the number of separate spline-lag
-#'     terms. All elements should inherit from \code{\link{SmoothLag}}}
+#'     \code{formula}. This may be \eqn{\leq}{<=} the number of separate
+#'     spline-lag terms. All elements should inherit from
+#'     \code{\link{SmoothLag}}}
 #'   \item{\code{lag.group}}{an integer vector returned by
 #'     \code{\link{parse.names}} where each unique integer corresponds to a
 #'     separate spline-lag term. For lag term \code{i}, \code{lag.group == i}

@@ -3,18 +3,37 @@
 \docType{methods}
 \name{changePoint}
 \alias{changePoint}
-\alias{changePoint,dlMod-method}
-\title{Lag Coefficient Change Points}
+\alias{changePoint}
+\title{Lag coefficient change points}
 \usage{
 changePoint(object, ...)
 
 \S4method{changePoint}{dlMod}(object, ...)
 }
-\value{
-An integer vector
-}
-\section{Methods (by class)}{
-\itemize{
-\item \code{dlMod}: S4 Method for \code{\link{dlMod}} objects
-}}
+\arguments{
+\item{object}{a fitted model object with viable \code{\link{lagIndex}} and
+\code{confint} methods}
 
+\item{...}{additional arguments passed to \code{\link{confint.dlMod}}}
+}
+\value{
+A list of integer vectors. One list element for each set of
+  DL terms in the model
+}
+\description{
+For each set of distributed lag terms in the model, finds and returns
+the (named) integer indices of radii where the corresponding
+coefficient is significantly different from zero, but the immediately
+larger radius is not significantly different from zero.
+}
+\examples{
+data (simdata)
+
+## Setup distance count matrix and corresponding lag distances
+X <- as.matrix(simdata[, -(1:3)])
+lag <- seq(0.1, 10, length.out = ncol(X))
+
+fit <- dlm(Y ~ Age + Gender + cr(lag, X), data = simdata)
+changePoint(fit)
+
+}

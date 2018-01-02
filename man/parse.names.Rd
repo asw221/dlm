@@ -6,3 +6,37 @@
 \usage{
 parse.names(base, names, .warn = TRUE)
 }
+\arguments{
+\item{base}{a character vector with literal matches in \code{names}}
+
+\item{names}{a character vector with substrings that are literal matches to
+elements in \code{base}}
+}
+\value{
+an S3 object of class \code{"pnames"} which is of \code{length}
+equal to \code{length(names)} and stores a unique integer label
+for each matching case in \code{base} and a look up dictionary
+for each integer.
+
+Indexing in \code{pnames} objects takes a character string argument
+and returns the vector indices of the matching \code{base} uses.
+See Examples.
+}
+\description{
+Parse variable names and create a unique integer label for each unique use
+of a matching base case. \code{parse.names} is used internally by several
+\pkg{dlmBE} functions to determine which distributed lag terms
+share the same random effects variance/penalty.
+}
+\examples{
+lg <- 1:5
+Z <- matrix(rbinom(60, 10, 0.1), 12)
+group <- rep(1:4, each = 3)
+base <- "cr(lg, Z)"
+names <- colnames(model.matrix(~ cr(lg, Z):factor(group)))
+pn <- parse.names(base, names, FALSE)
+names
+pn
+pn[""]
+
+}

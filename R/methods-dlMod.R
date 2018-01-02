@@ -1,12 +1,19 @@
 
-#' @title Extract DLM parameter estimates
-#'
-#'
-#' @name estimands
-NULL
+## Sigma
+## -------------------------------------------------------------------
+#' @rdname estimands
+setMethod("Sigma", signature = "dlMod",
+          function(object, scaled = TRUE, ...) {
+            if (scaled)
+              tcrossprod(scaleMat(object) %*% cholfVar(object))
+            else
+              tcrossprod(cholfVar(object))
+          })
+## Sigma
 
-
-#' @describeIn vcoef S4 Method for \code{\link[=dlMod]{dlMod}} objects
+## vcoef
+## -------------------------------------------------------------------
+#' @rdname estimands
 setMethod("vcoef0", signature = "dlMod",
           function(object, scaled = TRUE, ...) {
             z <- c(lme4::getME(object, "beta"),
@@ -14,8 +21,9 @@ setMethod("vcoef0", signature = "dlMod",
                    )
             if (scaled) c(as.matrix(scaleMat(object) %*% z)) else z
           })
+## vcoef0
 
-#' @describeIn vcoef S4 Method for \code{\link[=dlMod]{dlMod}} objects
+#' @rdname estimands
 setMethod("vcoef", signature = "dlMod",
           function(object, scaled = TRUE, ...) {
             z <- vcoef0(object, scaled = scaled)
@@ -41,9 +49,32 @@ setMethod("vcoef", signature = "dlMod",
             }
             structure(z, names = nms)
           })
+## vcoef
 
 
-#' @describeIn scaleMat S4 Method for \code{\link[=dlMod]{dlMod}} objects
+## scaleMat
+## -------------------------------------------------------------------
+#' @title Extract distributed lag scale matrix
+#'
+#' @description
+#' Return lag coefficient scale matrix, \eqn{S}. \eqn{S} should be invertable.
+#' Typically users should only interact with \code{scaleMat} indirectly
+#' through the \code{\link{estimands}} functions (with the argument
+#' \code{scaled = TRUE}).
+#'
+#' @param object a fitted model object
+#'
+#' @details
+#' If \eqn{\theta} is the vector of unscaled regression coefficients,
+#' then corresponding distributed lag terms in the vector
+#' \eqn{S \theta}{S * \theta} can be interpreted as average regression
+#' coefficients up to their associated radius. Non-DL coefficients are
+#' unchanged by this transformation.
+#'
+#' @return A square numeric matrix represented as a
+#' \code{Matrix::\link[Matrix]{sparseMatrix}} object
+#'
+#' @name scaleMat
 setMethod("scaleMat", signature = "dlMod",
           function(object, ...) {
             pq <- unlist(lme4::getME(object, c("p", "q")))
@@ -56,24 +87,40 @@ setMethod("scaleMat", signature = "dlMod",
 
 
 
-
-#' @describeIn Sigma S4 Method for \code{\link{dlMod}} objects
-setMethod("Sigma", signature = "dlMod",
-          function(object, scaled = TRUE, ...) {
-            if (scaled)
-              tcrossprod(scaleMat(object) %*% cholfVar(object))
-            else
-              tcrossprod(cholfVar(object))
-          })
-
-
-
-
-#' @describeIn changePoint S4 Method for \code{\link{dlMod}} objects
+## changePoint
+## -------------------------------------------------------------------
+#' @title Lag coefficient change points
+#'
+#' @description
+#' For each set of distributed lag terms in the model, finds and returns
+#' the (named) integer indices of radii where the corresponding
+#' coefficient is significantly different from zero, but the immediately
+#' larger radius is not significantly different from zero.
+#'
+#' @param object
+#'   a fitted model object with viable \code{\link{lagIndex}} and
+#'   \code{confint} methods
+#' @param ...
+#'   additional arguments passed to \code{\link{confint.dlMod}}
+#'
+#'
+#' @return A list of integer vectors. One list element for each set of
+#'   DL terms in the model
+#'
+#' @examples
+#' data (simdata)
+#'
+#' ## Setup distance count matrix and corresponding lag distances
+#' X <- as.matrix(simdata[, -(1:3)])
+#' lag <- seq(0.1, 10, length.out = ncol(X))
+#'
+#' fit <- dlm(Y ~ Age + Gender + cr(lag, X), data = simdata)
+#' changePoint(fit)
+#'
+#' @name changePoint
 setMethod("changePoint", "dlMod",
           function(object, ...) {
-            .Ignored(...)
-            ci <- confint(object, ...)
+            ci <- confint(object, coef = FALSE, ...)
             non0 <- !(ci[, 1] <= 0 & ci[, ncol(ci)] >= 0)
             lapply(lagIndex(object),
                    function(i) {
@@ -81,10 +128,37 @@ setMethod("changePoint", "dlMod",
                      which(x & !c(tail(x, -1), TRUE) & c(FALSE, head(x, -1)))
                    })
           })
+## changePoint
 
 
-
-#' @describeIn lagIndex S4 Method for \code{\link{dlMod}} objects
+## lagIndex
+## -------------------------------------------------------------------
+#' @title Extract list of indices of lag terms
+#'
+#' @description
+#' Intended for use in conjunction with the \code{\link{estimands}} functions.
+#' For each set of distributed lag terms in the model, find and return the
+#' integer indices that would extract the corresponding coefficients from
+#' the vector returned by \code{vcoef}.
+#'
+#' @param object
+#'   a fitted model object
+#' @param .fixed
+#'   a logical flag (default \code{.fixed = TRUE}) to indicate whether the
+#'   fixed/unpenalized DL term coefficient indices should be included or not.
+#'
+#' @examples
+#' data (simdata)
+#'
+#' ## Setup distance count matrix and corresponding lag distances
+#' X <- as.matrix(simdata[, -(1:3)])
+#' lag <- seq(0.1, 10, length.out = ncol(X))
+#'
+#' fit <- dlm(Y ~ Age + Gender + cr(lag, X), data = simdata)
+#' vcoef(fit)[lagIndex(fit)[[1]]]
+#'
+#' @seealso \code{\link{vcoef}}
+#' @name lagIndex
 setMethod("lagIndex", "dlMod",
           function(object, .fixed = TRUE, ...) {
             .ind <- function(obj, name) {
@@ -103,12 +177,13 @@ setMethod("lagIndex", "dlMod",
             }
             ndx
           })
+## lagIndex
 
 
 
-
-#' @describeIn estimands Exract named list of coefficient estimates from
-#'   a fitted \code{\link{dlMod}} object
+## coef.dlMod
+## -------------------------------------------------------------------
+#' @rdname estimands
 coef.dlMod <- function(object, scaled = TRUE, ...) {
   .Ignored(...)
   z <- vcoef(object, scaled = scaled)
@@ -133,10 +208,21 @@ coef.dlMod <- function(object, scaled = TRUE, ...) {
   }
   structure(z, class = "coef.mer")
 }
+## coef.dlMod
 
 
-#' @describeIn estimands Extract confidence intervals of specified
-#'   levels for coefficients from a fitted \code{\link{dlMod}} object
+## confint.dlMod
+## -------------------------------------------------------------------
+#' @param parm
+#'   an integer or character index to subset parameters
+#' @param level
+#'   the desired confidence level
+#' @param coef
+#'   if \code{coef = TRUE} (the default), \code{confint.dlMod} will
+#'   include an extra column (with \code{colname} \code{"coef"}) for the
+#'   regression coefficients themselves
+#'
+#' @rdname estimands
 confint.dlMod <- function(object, parm, level = 0.95, scaled = TRUE,
                           coef = TRUE, ...) {
   .Ignored(...)
@@ -153,6 +239,7 @@ confint.dlMod <- function(object, parm, level = 0.95, scaled = TRUE,
     ci <- cbind(coef = b, ci)
   if (!missing(parm)) ci[parm, ] else ci
 }
+## confint.dlMod
 
 
 

@@ -55,18 +55,9 @@
 #' The smoothing function can be any that returns a \code{\link{SmoothLag}} basis
 #' object. See Examples
 #' for a basic call to \code{dlm} using the formula interface, and a cubic
-#' radial lag basis specified via \code{cr}.
-#'
-#' Here, we consider models of the general form,
-#'
-#' \deqn{y_i = \alpha + \sum_{t = 1}^{n^*} \beta(t) x(t) + \epsilon_i}{y_i = \alpha + \sum_t \beta(t) * x(t) + \epsilon_i}
-#'
-#' where \eqn{t = 1, \ldots, n^*}{t = 1, ..., n^*} indexes a single set of
-#' lag coefficients, \eqn{\beta}. In general, the model can be extended to
-#' include other fixed effects, other sets of lag terms, and random effects.
-#' Above, \eqn{\beta(t)} and \eqn{x(t)} can be thought of as the average linear
-#' effect and concentration of events, respectively, occurring between
-#' two radii, \eqn{r_{t-1}}, and \eqn{r_t} (see References).
+#' radial lag basis specified via \code{cr}, and the \pkg{dlmBE}
+#' \code{\link[=dlmBE-package]{package documentation}} for a discussion
+#' of the types of models \code{dlm} is designed to handle.
 #'
 #'
 #' @return
@@ -103,7 +94,6 @@
 #' @seealso \code{lme4::\link[lme4]{lmer}}, \code{\link{cr}},
 #'   \code{\link{dlMod}}
 #'
-
 dlm <- function(formula, data, subset, na.action, weights, offset,
   method = c("REML", "MLE", "reml", "mle"),
   family = gaussian(),

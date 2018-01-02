@@ -6,7 +6,6 @@
 ##     summary.dlMod coefficient matrix
 ##
 
-
 summary.dlMod <- function (object,
     correlation = (p <= getOption("lme4.summary.cor.max")),
     use.hessian = NULL, ...)
@@ -70,14 +69,14 @@ summary.dlMod <- function (object,
                  ),
             class = c("summary.dlMod", "summary.merMod"))
 }
-
-
+## summry.dlMod
 
 
 
 print.summary.dlMod <- function(x,
   digits = max(3, getOption("digits") - 3),
-  correlation = NULL, symbolic.cor = FALSE,
+  correlation = NULL,
+  symbolic.cor = FALSE,
   signif.stars = getOption("show.signif.stars"),
   ranef.comp = c("Variance", "Std.Dev."),
   show.resids = TRUE,

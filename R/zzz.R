@@ -1,8 +1,7 @@
 
-#' dlm: Distributed lag models in R using lme4
+#' dlmBE: Distributed lag models in R using lme4
 #'
 #' @inherit dlm references
-#' @inherit basis references
 #'
 #' @description
 #' This package fits the distributed lag models (DLMs) described by Baek et
@@ -74,5 +73,5 @@
 #'
 #'
 #' @docType package
-#' @name dlm-package
+#' @name dlmBE-package
 NULL

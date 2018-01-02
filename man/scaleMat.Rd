@@ -3,8 +3,8 @@
 \docType{methods}
 \name{scaleMat}
 \alias{scaleMat}
-\alias{scaleMat,dlMod-method}
-\title{Extract Distributed Lag Scale Matrix}
+\alias{scaleMat}
+\title{Extract distributed lag scale matrix}
 \usage{
 scaleMat(object, ...)
 
@@ -14,18 +14,19 @@ scaleMat(object, ...)
 \item{object}{a fitted model object}
 }
 \value{
-A square numeric matrix
+A square numeric matrix represented as a
+\code{Matrix::\link[Matrix]{sparseMatrix}} object
 }
 \description{
-Return lag coefficient scale matrix, S, such that the distributed lag
-coefficients fit by the model are obtained via the transformation
-\eqn{\beta = S \theta}{\beta = S * \theta}. S should be invertable.
+Return lag coefficient scale matrix, \eqn{S}. \eqn{S} should be invertable.
+Typically users should only interact with \code{scaleMat} indirectly
+through the \code{\link{estimands}} functions (with the argument
+\code{scaled = TRUE}).
 }
 \details{
-\code{scaleMat} is S4 generic.
+If \eqn{\theta} is the vector of unscaled regression coefficients,
+then corresponding distributed lag terms in the vector
+\eqn{S \theta}{S * \theta} can be interpreted as average regression
+coefficients up to their associated radius. Non-DL coefficients are
+unchanged by this transformation.
 }
-\section{Methods (by class)}{
-\itemize{
-\item \code{dlMod}: S4 Method for \code{\link[=dlMod]{dlMod}} objects
-}}
-

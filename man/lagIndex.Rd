@@ -3,15 +3,36 @@
 \docType{methods}
 \name{lagIndex}
 \alias{lagIndex}
-\alias{lagIndex,dlMod-method}
+\alias{lagIndex}
 \title{Extract list of indices of lag terms}
 \usage{
 lagIndex(object, ...)
 
 \S4method{lagIndex}{dlMod}(object, .fixed = TRUE, ...)
 }
-\section{Methods (by class)}{
-\itemize{
-\item \code{dlMod}: S4 Method for \code{\link{dlMod}} objects
-}}
+\arguments{
+\item{object}{a fitted model object}
 
+\item{.fixed}{a logical flag (default \code{.fixed = TRUE}) to indicate whether the
+fixed/unpenalized DL term coefficient indices should be included or not.}
+}
+\description{
+Intended for use in conjunction with the \code{\link{estimands}} functions.
+For each set of distributed lag terms in the model, find and return the
+integer indices that would extract the corresponding coefficients from
+the vector returned by \code{vcoef}.
+}
+\examples{
+data (simdata)
+
+## Setup distance count matrix and corresponding lag distances
+X <- as.matrix(simdata[, -(1:3)])
+lag <- seq(0.1, 10, length.out = ncol(X))
+
+fit <- dlm(Y ~ Age + Gender + cr(lag, X), data = simdata)
+vcoef(fit)[lagIndex(fit)[[1]]]
+
+}
+\seealso{
+\code{\link{vcoef}}
+}
