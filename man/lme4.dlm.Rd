@@ -2,7 +2,7 @@
 % Please edit documentation in R/dlm.R
 \name{lme4.dlm}
 \alias{lme4.dlm}
-\title{lme4.dlm}
+\title{Fit distributed lag models using lme4}
 \usage{
 lme4.dlm(parsed, family = gaussian(), control = list(), REML = FALSE, ...)
 }

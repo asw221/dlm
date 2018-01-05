@@ -12,9 +12,9 @@ changePoint(object, ...)
 }
 \arguments{
 \item{object}{a fitted model object with viable \code{\link{lagIndex}} and
-\code{confint} methods}
+\code{\link[=estimands]{confint}} methods}
 
-\item{...}{additional arguments passed to \code{\link{confint.dlMod}}}
+\item{...}{additional arguments passed to \code{\link[=estimands]{confint}}}
 }
 \value{
 A list of integer vectors. One list element for each set of

@@ -11,7 +11,7 @@ setMethod("omega", signature = "LagBasis",
 
 ## predict.LagBasis
 ## -------------------------------------------------------------------
-#' @title Predict New Values for Fitted Lag Basis
+#' @title Predict new values for fitted lag basis
 #'
 #' @param object A \code{\link{LagBasis}} object
 #'

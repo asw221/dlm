@@ -99,9 +99,9 @@ setMethod("scaleMat", signature = "dlMod",
 #'
 #' @param object
 #'   a fitted model object with viable \code{\link{lagIndex}} and
-#'   \code{confint} methods
+#'   \code{\link[=estimands]{confint}} methods
 #' @param ...
-#'   additional arguments passed to \code{\link{confint.dlMod}}
+#'   additional arguments passed to \code{\link[=estimands]{confint}}
 #'
 #'
 #' @return A list of integer vectors. One list element for each set of

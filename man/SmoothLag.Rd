@@ -3,7 +3,7 @@
 \docType{class}
 \name{SmoothLag}
 \alias{SmoothLag}
-\title{Lag Matrix With Applied Smoothing}
+\title{Lag matrix with applied smoothing}
 \description{
 An S4 object for representing lag covariates and
 storing details about the basis smoothing. Intended for use within the
@@ -24,7 +24,7 @@ This scheme is intended to work conveniently with
 \item{\code{random}}{Contains the random effects or penalized components of the smoothed
 lag function}
 
-\item{\code{terms}}{Character vector containing the function name and deparsed arguments
+\item{\code{signature}}{Character vector containing the function name and deparsed arguments
 from whatever smoothing function generated the \code{SmoothLag} object}
 }}
 

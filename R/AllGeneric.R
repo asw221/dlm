@@ -21,9 +21,9 @@ makeDlMod <- function(object, ...) UseMethod("makeDlMod", object)
 #'   additional arguments
 #'
 #' @usage
-#'   coef(object, ...)
+#' coef(object, ...)
 #'
-#'   confint(object, ...)
+#' confint(object, ...)
 #'
 #' @details
 #' Other typical methods like
@@ -87,11 +87,12 @@ setGeneric("changePoint", function(object, ...) standardGeneric("changePoint"))
 
 ## omega
 ## -------------------------------------------------------------------
-#' @title Extract Lag Basis Matrix
+#' @title Extract lag basis matrix
 #' @inheritSection basis Decomposition
 #'
 #' @description
-#' Extract lag basis matrix, \eqn{\Omega = [C_0, K_1]}. See below
+#' Extract lag basis matrix, \eqn{\Omega = [C_0, K_1]}. See
+#' the definition below (which is borrowed from \code{\link{basis}})
 #'
 #' @param object
 #'   An object storing details of the basis decomposition
@@ -100,9 +101,6 @@ setGeneric("changePoint", function(object, ...) standardGeneric("changePoint"))
 #'
 #' @return
 #' A square numeric matrix
-#'
-#' @details
-#' \code{omega} is S4 generic.
 #'
 #' @name omega
 setGeneric("omega", function(object, ...) standardGeneric("omega"))
@@ -137,7 +135,8 @@ setGeneric("cholfVar", function(object, ...) standardGeneric("cholfVar"))
 #' \deqn{g(E(Y_i | b_i)) = X \beta + Z_i b_i}{g(E(Y_i | b_i)) = X * \beta + Z_i * b_i}
 #' with link function \eqn{g(\cdot)}{g()}, and
 #' \eqn{b_i \sim \mathrm{N}(0, \Sigma_b)}{b_i ~ N(0, \Sigma_b)}, the Cholesky
-#' factor returned will be for \eqn{I^{-1}(\theta)}{I^-1(\theta)}, where
+#' factor returned will be such that
+#' \eqn{L L^T = I^{-1}(\theta)}{L * L' = I^-1(\theta)}, where
 #' \eqn{\theta = (\beta^T, b_1^T, b_2^T, \ldots)^T}{\theta = (\beta', b_1', b2', ...)'}.
 #' @rdname cholfVar
 setMethod("cholfVar", signature = "merMod",

@@ -8,7 +8,7 @@
 ## cr(lag, X):factor(group)1 to have a different index
 ## than cr(lag, X):factor(group)2, and so on
 ##
-#' @title parse.names
+#' @title Partition DL term names
 #'
 #' @description
 #' Parse variable names and create a unique integer label for each unique use
@@ -42,6 +42,7 @@
 #' names
 #' pn
 #' pn[""]
+#' pn["cr(lg, Z):factor(group)2"]
 #'
 parse.names <- function(base, names, .warn = TRUE) {
   regex <- sprintf(":?\\b?\\Q%s\\E[0-9.]*\\b?:?", base)

@@ -1,10 +1,10 @@
 
 ## plot.dlMod
 ## -------------------------------------------------------------------
-#' @title Plot smoothed lag terms
+#' @title Plots of lag terms
 #'
 #' @description
-#' Plot estimated lag coefficients
+#' Plot estimated lag coefficients and confidence intervals
 #'
 #' @param x
 #'   a fitted model object that inherits from \code{\link{dlMod}}
@@ -32,8 +32,8 @@
 #' are largely customizable.
 #'
 #' For now, the only supported plot geometries correspond to
-#' \code{ggplot2::\link[ggplot2]{geom_pointrange}} and
-#' \code{ggplot2::\link[ggplot2]{geom_line}}, and show the estimated
+#' \code{\link[ggplot2]{geom_pointrange}} and
+#' \code{\link[ggplot2]{geom_line}}, and show the estimated
 #' functions of Lag radii as either point and interval estimates,
 #' or continuous functions with confidence bands, respectively. The
 #' default option is \code{geom = "pointrange"} for point and interval

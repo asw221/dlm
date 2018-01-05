@@ -1,5 +1,5 @@
 
-#' Simulated Built Environment Data
+#' Simulated built environment data
 #'
 #' @docType data
 #' @usage data(simdata)

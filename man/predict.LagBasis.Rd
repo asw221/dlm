@@ -2,7 +2,7 @@
 % Please edit documentation in R/methods-LagBasis.R
 \name{predict.LagBasis}
 \alias{predict.LagBasis}
-\title{Predict New Values for Fitted Lag Basis}
+\title{Predict new values for fitted lag basis}
 \usage{
 \method{predict}{LagBasis}(object, x, ...)
 }

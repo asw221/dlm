@@ -1,7 +1,7 @@
 
 ## interpret.dlm
 ## -------------------------------------------------------------------
-#' @title Interpret a DLM Formula
+#' @title Interpret a DLM formula
 #'
 #' @description
 #' Given an appropriate DL model formula and data-frame, prepares
@@ -32,11 +32,12 @@
 #' @return
 #' an S3 object of class \code{"parsed.dlm"} with list elements:
 #' \describe{
-#'   \item{\code{formula}}{the formula passed to \code{\link{dlm}}}
+#'   \item{\code{formula}}{the formula passed to \code{interpret.dlm}}
 #'   \item{\code{lme4.formula}}{a reconstructed formula that is then passed
 #'     to the \pkg{lme4} \code{\link[lme4]{modular}} functions}
 #'   \item{\code{model}}{a \code{data.frame} returned by call to
-#'     \code{stats::\link[stats]{model.frame}}}
+#'     \code{stats::\link[stats]{model.frame}}; a copy of the fixed
+#'     effects data needed to fit the model}
 #'   \item{\code{Bt}}{a matrix of the random or penalized lag basis vectors,
 #'     where each vector is a row. Stored as an object that inherits from
 #'     \code{Matrix::\link[Matrix]{dMatrix}}}

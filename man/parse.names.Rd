@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{parse.names}
 \alias{parse.names}
-\title{parse.names}
+\title{Partition DL term names}
 \usage{
 parse.names(base, names, .warn = TRUE)
 }
@@ -38,5 +38,6 @@ pn <- parse.names(base, names, FALSE)
 names
 pn
 pn[""]
+pn["cr(lg, Z):factor(group)2"]
 
 }

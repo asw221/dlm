@@ -6,7 +6,7 @@
 \alias{omega}
 \alias{omega,LagBasis-method}
 \alias{omega,SmoothLag-method}
-\title{Extract Lag Basis Matrix}
+\title{Extract lag basis matrix}
 \usage{
 omega(object, ...)
 
@@ -23,10 +23,8 @@ omega(object, ...)
 A square numeric matrix
 }
 \description{
-Extract lag basis matrix, \eqn{\Omega = [C_0, K_1]}. See below
-}
-\details{
-\code{omega} is S4 generic.
+Extract lag basis matrix, \eqn{\Omega = [C_0, K_1]}. See
+the definition below (which is borrowed from \code{\link{basis}})
 }
 \section{Methods (by class)}{
 \itemize{

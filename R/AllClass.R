@@ -49,7 +49,7 @@ LagBasis <- setClass("LagBasis",
 
 ## SmoothLag
 ## -------------------------------------------------------------------
-#' @title Lag Matrix With Applied Smoothing
+#' @title Lag matrix with applied smoothing
 #'
 #' @description
 #' An S4 object for representing lag covariates and
@@ -61,17 +61,14 @@ LagBasis <- setClass("LagBasis",
 #' @slot basis
 #'   A \code{\link{LagBasis}} smoothing object containing details about the
 #'   lag and the smoothing parameters used
-#'
 #' @slot .Data
 #'   Contains the "fixed effects" components of the smoothed lag function.
 #'   This scheme is intended to work conveniently with
 #'   \code{stats::\link[stats]{model.matrix}}
-#'
 #' @slot random
 #'   Contains the random effects or penalized components of the smoothed
 #'   lag function
-#'
-#' @slot terms
+#' @slot signature
 #'   Character vector containing the function name and deparsed arguments
 #'   from whatever smoothing function generated the \code{SmoothLag} object
 #'
@@ -91,7 +88,7 @@ SmoothLag <- setClass("SmoothLag",
 
 ## dlMod
 ## -------------------------------------------------------------------
-#' @title Distributed lag models
+#' @title Distributed lag model objects
 #'
 #' @description
 #' A fitted distributed lag model object. Inherits from \pkg{lme4}'s

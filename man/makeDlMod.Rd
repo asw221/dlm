@@ -3,7 +3,7 @@
 \name{makeDlMod}
 \alias{makeDlMod}
 \alias{makeDlMod.merMod}
-\title{makeDlMod}
+\title{Convert fitted models to 'dlMod' objects}
 \usage{
 \method{makeDlMod}{merMod}(object, parsed, call, ...)
 }

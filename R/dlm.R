@@ -128,7 +128,7 @@ dlm <- function(formula, data, subset, na.action, weights, offset,
 
 ## lme4.dlm
 ## -------------------------------------------------------------------
-#' @title lme4.dlm
+#' @title Fit distributed lag models using lme4
 #'
 #' @description
 #' Fits an interpreted distributed lag model using \pkg{lme4}
@@ -248,7 +248,7 @@ lme4.dlm <- function(parsed, family = gaussian(),
 
 ## makeDlMod.merMod
 ## -------------------------------------------------------------------
-#' @title makeDlMod
+#' @title Convert fitted models to 'dlMod' objects
 #'
 #' @description
 #' Convert an appropriately fit model object into an object of class

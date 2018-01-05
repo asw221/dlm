@@ -3,7 +3,7 @@
 \docType{class}
 \name{dlMod}
 \alias{dlMod}
-\title{Distributed lag models}
+\title{Distributed lag model objects}
 \description{
 A fitted distributed lag model object. Inherits from \pkg{lme4}'s
 \code{\link[lme4]{merMod}} so that most methods defined for this

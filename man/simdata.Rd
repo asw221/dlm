@@ -3,7 +3,7 @@
 \docType{data}
 \name{simdata}
 \alias{simdata}
-\title{Simulated Built Environment Data}
+\title{Simulated built environment data}
 \format{The first column (\code{Y}) is the outcome variable (intended to mimic
 negative BMI score), covariates \code{Gender} (binary)
 and \code{Age} (years) come next, and are followed by 100 location description
@@ -15,6 +15,6 @@ features within each radius for each participant.}
 data(simdata)
 }
 \description{
-Simulated Built Environment Data
+Simulated built environment data
 }
 \keyword{datasets}
