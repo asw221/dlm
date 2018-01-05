@@ -25,7 +25,7 @@
 #'
 #' Uses \code{R}'s \code{stats::\link[stats]{model.matrix}} mechanisms to build
 #' and parse the random effects (or penalized) components of spline-lag terms
-#' in the model. The object returned is later passed to other \pkg{dlm}
+#' in the model. The object returned is later passed to other \pkg{dlmBE}
 #' functions in order to fit the specified model.
 #'
 #'

@@ -1,28 +1,26 @@
 
 ## LagBasis
 ## -------------------------------------------------------------------
-#' @title Create and Manipulate Lag Basis Functions
+#' @title Create and manipulate lag basis functions
 #' @inherit basis references
 #'
 #' @description
-#' S4 class object to store and query components of
+#' S4 class object to store and query components of computed
 #' lag basis functions. User interface for creating this class can be found in
 #' \code{\link{basis}}.
 #'
 #' @slot x
-#'   original lag data. The set of points to generate the
-#'   distance-decomposition basis from
+#'   radii that define ring-shaped areas around participant locations
 #' @slot x.center
-#'   store the value the lag data was centered to
+#'   the value \code{x} was centered to prior to computing the basis
 #' @slot x.scale
-#'   store the value the lag data was scaled by
+#'   the value \code{x} was scaled by prior to computing the basis
 #' @slot C0
-#'   C_0 part of basis matrix
+#'   \eqn{C_0} part of basis matrix
 #' @slot K1
-#'   K_1 part of basis matrix
+#'   \eqn{K_1} part of basis matrix
 #' @slot dist.fun
-#'   whatever distance function was used to compute the pointwise
-#'   distances between the elements of \code{x}
+#'   the function applied to the elements of \code{x} to compute the basis
 #'
 #' @details
 #' See \code{\link{basis}} for details of the decomposition
@@ -98,7 +96,7 @@ SmoothLag <- setClass("SmoothLag",
 #' @description
 #' A fitted distributed lag model object. Inherits from \pkg{lme4}'s
 #' \code{\link[lme4]{merMod}} so that most methods defined for this
-#' parent class should work seamlessly within \pkg{dlm} analysis
+#' parent class should work seamlessly within \pkg{dlmBE} analysis
 #'
 #' @slot resp
 #'   An \code{lme4::\link[lme4]{lmResp}} object to store a

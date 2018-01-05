@@ -2,14 +2,43 @@
 % Please edit documentation in R/plot.R
 \name{plotDlm}
 \alias{plotDlm}
-\alias{plot.dlMod}
 \title{Plot smoothed lag terms}
 \usage{
+## S3 method for class 'dlMod'
 plot(x, geom = c("pointrange", "line"), level = 0.95, scaled = TRUE, ...)
 }
+\arguments{
+\item{x}{a fitted model object that inherits from \code{\link{dlMod}}}
+
+\item{level}{a desired confidence interval level}
+
+\item{scaled}{whether or not lag coefficients should be scaled
+(see \code{\link{estimands}})}
+
+\item{geom}{a \pkg{ggplot2} graph geometry. See Details}
+
+\item{...}{additional graphical parameters to be passed to
+\code{ggplot2::\link[ggplot2]{facet_wrap}}}
+}
 \value{
-a \code{ggplot2} graphic object
+a \pkg{ggplot2} graphic object
 }
 \description{
-Plot estimated lag-spline effects
+Plot estimated lag coefficients
+}
+\details{
+Plots estimated lag coefficients and confidence intervals to allow
+convenient visual inspection of effects over different radii. Point
+estimates and confidence intervals are computed using
+\code{\link[=estimands]{confint}}, and plots are rendered using
+minimal \pkg{ggplot2} commands so that the resulting graphics objects
+are largely customizable.
+
+For now, the only supported plot geometries correspond to
+\code{ggplot2::\link[ggplot2]{geom_pointrange}} and
+\code{ggplot2::\link[ggplot2]{geom_line}}, and show the estimated
+functions of Lag radii as either point and interval estimates,
+or continuous functions with confidence bands, respectively. The
+default option is \code{geom = "pointrange"} for point and interval
+estimates.
 }

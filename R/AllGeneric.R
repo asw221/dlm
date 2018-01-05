@@ -20,6 +20,11 @@ makeDlMod <- function(object, ...) UseMethod("makeDlMod", object)
 #' @param ...
 #'   additional arguments
 #'
+#' @usage
+#'   coef(object, ...)
+#'
+#'   confint(object, ...)
+#'
 #' @details
 #' Other typical methods like
 #' \code{residuals}, and \code{sigma}, etc. are handled via inheritance
@@ -86,7 +91,7 @@ setGeneric("changePoint", function(object, ...) standardGeneric("changePoint"))
 #' @inheritSection basis Decomposition
 #'
 #' @description
-#' Extract lag basis matrix, \eqn{\Omega}.
+#' Extract lag basis matrix, \eqn{\Omega = [C_0, K_1]}. See below
 #'
 #' @param object
 #'   An object storing details of the basis decomposition
@@ -109,6 +114,7 @@ setGeneric("omega", function(object, ...) standardGeneric("omega"))
 ## -------------------------------------------------------------------
 #' @title Extract Cholesky factor of inverse Information matrix
 #'
+#' @description
 #' Computes the Cholesky factor, \eqn{L}, of the inverse of the
 #' Fisher Information matrix for all regression coefficients in
 #' a fitted model. The coefficient covariance matrix can then be
@@ -126,13 +132,13 @@ setGeneric("omega", function(object, ...) standardGeneric("omega"))
 setGeneric("cholfVar", function(object, ...) standardGeneric("cholfVar"))
 
 
-#' @section Method for 'lme4::merMod' objects:
+#' @section Method for 'merMod' objects:
 #' For a mixed-effects model of the form, for example,
 #' \deqn{g(E(Y_i | b_i)) = X \beta + Z_i b_i}{g(E(Y_i | b_i)) = X * \beta + Z_i * b_i}
 #' with link function \eqn{g(\cdot)}{g()}, and
 #' \eqn{b_i \sim \mathrm{N}(0, \Sigma_b)}{b_i ~ N(0, \Sigma_b)}, the Cholesky
 #' factor returned will be for \eqn{I^{-1}(\theta)}{I^-1(\theta)}, where
-#' \eqn{\theta = (\beta^T, b_1^T, B_2^T, \ldots)^T}{\theta = (\beta', b_1', b2', ...)'}.
+#' \eqn{\theta = (\beta^T, b_1^T, b_2^T, \ldots)^T}{\theta = (\beta', b_1', b2', ...)'}.
 #' @rdname cholfVar
 setMethod("cholfVar", signature = "merMod",
   function(object, ...) {

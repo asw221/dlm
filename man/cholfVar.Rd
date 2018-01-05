@@ -4,12 +4,7 @@
 \name{cholfVar}
 \alias{cholfVar}
 \alias{cholfVar,merMod-method}
-\title{Extract Cholesky factor of inverse Information matrix
-
-Computes the Cholesky factor, \eqn{L}, of the inverse of the
-Fisher Information matrix for all regression coefficients in
-a fitted model. The coefficient covariance matrix can then be
-computed as \eqn{L L^T}{L * L'}.}
+\title{Extract Cholesky factor of inverse Information matrix}
 \usage{
 cholfVar(object, ...)
 
@@ -24,13 +19,19 @@ cholfVar(object, ...)
 A square numeric matrix represented as a
 \code{Matrix::\link[Matrix]{sparseMatrix}} object
 }
-\section{Method for 'lme4}{
-:merMod' objects:
+\description{
+Computes the Cholesky factor, \eqn{L}, of the inverse of the
+Fisher Information matrix for all regression coefficients in
+a fitted model. The coefficient covariance matrix can then be
+computed as \eqn{L L^T}{L * L'}.
+}
+\section{Method for 'merMod' objects}{
+
 For a mixed-effects model of the form, for example,
 \deqn{g(E(Y_i | b_i)) = X \beta + Z_i b_i}{g(E(Y_i | b_i)) = X * \beta + Z_i * b_i}
 with link function \eqn{g(\cdot)}{g()}, and
 \eqn{b_i \sim \mathrm{N}(0, \Sigma_b)}{b_i ~ N(0, \Sigma_b)}, the Cholesky
 factor returned will be for \eqn{I^{-1}(\theta)}{I^-1(\theta)}, where
-\eqn{\theta = (\beta^T, b_1^T, B_2^T, \ldots)^T}{\theta = (\beta', b_1', b2', ...)'}.
+\eqn{\theta = (\beta^T, b_1^T, b_2^T, \ldots)^T}{\theta = (\beta', b_1', b2', ...)'}.
 }
 

@@ -13,6 +13,9 @@
 \alias{confint.dlMod}
 \title{Extract DLM parameter estimates}
 \usage{
+coef(object, ...)
+confint(object, ...)
+
 Sigma(object, ...)
 
 vcoef(object, ...)

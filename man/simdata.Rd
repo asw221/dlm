@@ -4,33 +4,17 @@
 \name{simdata}
 \alias{simdata}
 \title{Simulated Built Environment Data}
-\format{The first column (\code{Y}) is the outcome variable, covariates \code{Gender}
-and \code{Age} come next, and are followed by 100 location description
-variables. Each column of these 100 location count variables corresponds to
-a distance lag equal to the values in \code{seq(0.1, 10, 0.1)}.}
+\format{The first column (\code{Y}) is the outcome variable (intended to mimic
+negative BMI score), covariates \code{Gender} (binary)
+and \code{Age} (years) come next, and are followed by 100 location description
+variables each corresponding to
+a lag radius equal to the values in \code{seq(0.1, 10, 0.1)}. These
+100 location variables store the counts of simulated built environment
+features within each radius for each participant.}
 \usage{
 data(simdata)
 }
 \description{
 Simulated Built Environment Data
-}
-\examples{
-data(simdata)
-simdata[1:10, 1:5]
-
-}
-\references{
-Baek J, Sanchez BN, Berrocal VJ, & Sanchez-Vaznaugh EV
-(2016) Epidemiology 27(1):116-24.
-(\href{https://www.ncbi.nlm.nih.gov/pubmed/26414942}{PubMed})
-
-Baek J, Hirsch JA, Moore K, Tabb LP, et al. (2017)
-Epidemiology 28(3):403-11.
-(\href{https://www.ncbi.nlm.nih.gov/pubmed/28145983}{PubMed})
-
-Bates D, Maechler M, Bolker BM, & Walker SC (2015)
-Fitting linear mixed-effects models using lme4. J
-Stat Softw 67(1).
-(\href{https://www.jstatsoft.org/article/view/v067i01/0}{jstatsoft.org})
 }
 \keyword{datasets}

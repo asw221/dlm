@@ -7,7 +7,7 @@ export (basis,
         interpret.dlm,  # is.LagBasis, is.SmoothLag, is.dlMod,
         lme4.dlm,
         makeDlMod,
-        parse.names,
+        parse.names, plotDlm,
         sm
         )
 

@@ -2,6 +2,12 @@
 ## Methods for SmoothLag Class
 ## -------------------------------------------------------------------
 
+#' @describeIn omega Method for \code{"\link{LagBasis}"} objects
+setMethod("omega", signature = "SmoothLag",
+          function(object, ...)  omega(object@basis)
+          )
+
+
 ## getGeneric("[")
 ## ## standardGeneric for "[" defined from package "base"
 ## ## function (x, i, j, ..., drop = TRUE)

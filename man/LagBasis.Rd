@@ -3,9 +3,9 @@
 \docType{class}
 \name{LagBasis}
 \alias{LagBasis}
-\title{Create and Manipulate Lag Basis Functions}
+\title{Create and manipulate lag basis functions}
 \description{
-S4 class object to store and query components of
+S4 class object to store and query components of computed
 lag basis functions. User interface for creating this class can be found in
 \code{\link{basis}}.
 }
@@ -15,19 +15,17 @@ See \code{\link{basis}} for details of the decomposition
 \section{Slots}{
 
 \describe{
-\item{\code{x}}{original lag data. The set of points to generate the
-distance-decomposition basis from}
+\item{\code{x}}{radii that define ring-shaped areas around participant locations}
 
-\item{\code{x.center}}{store the value the lag data was centered to}
+\item{\code{x.center}}{the value \code{x} was centered to prior to computing the basis}
 
-\item{\code{x.scale}}{store the value the lag data was scaled by}
+\item{\code{x.scale}}{the value \code{x} was scaled by prior to computing the basis}
 
-\item{\code{C0}}{C_0 part of basis matrix}
+\item{\code{C0}}{\eqn{C_0} part of basis matrix}
 
-\item{\code{K1}}{K_1 part of basis matrix}
+\item{\code{K1}}{\eqn{K_1} part of basis matrix}
 
-\item{\code{dist.fun}}{whatever distance function was used to compute the pointwise
-distances between the elements of \code{x}}
+\item{\code{dist.fun}}{the function applied to the elements of \code{x} to compute the basis}
 }}
 
 \references{

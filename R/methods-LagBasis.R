@@ -2,7 +2,7 @@
 
 ## omega
 ## -------------------------------------------------------------------
-#' @describeIn omega Method for "\code{LagBasis}" objects
+#' @describeIn omega Method for \code{"\link{LagBasis}"} objects
 setMethod("omega", signature = "LagBasis",
           function(object, ...)  cbind(object@C0, object@K1)
           )

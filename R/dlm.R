@@ -61,10 +61,10 @@
 #'
 #'
 #' @return
-#' An S4 object that inherits from \code{\link{dlMod}} and
-#' \code{lme4::\link[lme4]{merMod}} containing the results of the fitted model.
-#' Many standard model summary methods are available for these object
-#' types
+#' An S4 object that inherits from \code{\link{dlMod}} (and
+#' \code{lme4::\link[lme4]{merMod}}, by extension) containing the
+#' results of the fitted model. Many standard model summary methods are
+#' available for these object types
 #'
 #'
 #' @references Baek J, Sanchez BN, Berrocal VJ, & Sanchez-Vaznaugh EV

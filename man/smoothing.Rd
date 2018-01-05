@@ -21,10 +21,10 @@ to apply the linear basis transformation to.
 \item{...}{arguments to be passed to \code{\link{basis}}}
 }
 \value{
-An S4 object of class \code{\link{SmoothBasis}}.
+An S4 object of class \code{\link{SmoothLag}}.
 }
 \description{
-Construct a set of basis vectors for distances between distributed
+Constructs a set of basis vectors for distances between distributed
 lag points, and apply as a linear transformation of a
 concentration matrix.
 }
@@ -33,14 +33,14 @@ These functions are little more than convenient
   wrappers to the function \code{\link{basis}} and the
   \code{\link{SmoothLag}} class constructor. They are intended to
   simplify the task of specifying lag terms in a model \code{formula}.
-  The functions computes a set of basis vectors for
+  The functions compute a set of basis vectors for
   parameter \code{x} and applies this basis as a linear transformation
   of the covariate/concentration matrix parameter, \code{Z}. For example,
-  if \code{Z} is the identity matrix, the model fit will simply be
-  the natural cubic spline of \code{x}.
+  if \code{cr} is used and \code{Z} is the identity matrix,
+  the model fit will simply be the natural cubic spline of \code{x}.
 
   Note that other basis extensions should always return an object
-  that inherits from \code{\link{SmoothBasis}}
+  that inherits from \code{\link{SmoothLag}}
 }
 \section{Functions}{
 \itemize{
@@ -64,5 +64,5 @@ Rupert D, Wand MP, & Carroll RJ (2003) Semiparametric
 Regression. New York: Cambridge University Press.
 }
 \seealso{
-\code{\link{basis}}, \code{\link{SmoothBasis}}
+\code{\link{basis}}, \code{\link{SmoothLag}}
 }

@@ -2,25 +2,24 @@
 % Please edit documentation in R/bases.R
 \name{basis}
 \alias{basis}
-\title{Basis vector sets}
+\title{Basis vectors}
 \usage{
 basis(x, center = TRUE, scale = FALSE, .fun = NULL, ...)
 }
 \arguments{
-\item{x}{a vector or radii; the resultant
-distance matrix will be decomposed into a set of basis vectors}
+\item{x}{radii that define ring-shaped areas around participant locations}
 
-\item{center}{if \code{TRUE} (the default), parameter \code{x} will be mean
-centered prior to computing distances. Otherwise, if given a
+\item{center}{if \code{TRUE} (the default), \code{x} will be mean
+centered prior to computing the basis. Otherwise, if given a
 \code{numeric} value, \code{x} will be centered at \code{center}}
 
 \item{scale}{if \code{TRUE} (default = \code{FALSE}), parameter \code{x}
 will be scaled by \code{sd(x)}. Otherwise, if given a
 \code{numeric} value, \code{x} will be scaled by \code{scale}}
 
-\item{.fun}{a function to compute distances between the values in \code{x}.
-The default is to compute pairwise cubed absolute distances. See
-Details}
+\item{.fun}{a function to define the type of basis. The default is to compute
+a cubic radial basis based on pairwise cubed absolute differences
+among the radii. See Details}
 
 \item{...}{other parameters passed to \code{.fun}}
 }
@@ -28,8 +27,10 @@ Details}
 An object of class \code{\link{LagBasis}}
 }
 \description{
-Construct a set of basis vectors based on the distances between
-input points.
+Constructs a set of basis vectors \eqn{C_0} and \eqn{K_1} used to
+constrain distributed lag coefficients, \eqn{\beta(\cdot, \cdot)}{\beta},
+using splines. The basis vectors depend on the radii that define
+ring-shaped areas around participant locations.
 Typical usage relies on calling basis application functions, like
 \code{\link{cr}} (e.g. in \code{\link{dlm}} model
 formulas); users should not often have to interact with \code{basis}
@@ -38,9 +39,9 @@ directly.
 \details{
 Alternative distance functions, \code{.fun}, may be specified, and
 error checking on the user's choice of \code{.fun} is deliberately
-missing. Proper candidates for \code{.fun} should return a
-(\code{length(x)} by \code{length(x)}) matrix, however, and values
-are typically non-negative.
+missing. Proper candidates for \code{.fun} should return an
+\eqn{(L \times L)} matrix, where \eqn{L} is the same as \code{length(x)};
+elements of this matrix are typically non-negative.
 
 In addition, new distance function definitions should follow the idiom:
 
@@ -51,25 +52,27 @@ In addition, new distance function definitions should follow the idiom:
 \code{  ...}
 
 The default value of \code{.fun} computes cubic radial distance,
-which amounts to \code{abs(outer(x, y, "-"))^3}; distance matrix
-decomposition follows Rupert, Wand, and Carroll
-(2003).
+which amounts to \code{abs(outer(x, y, "-"))^3}; the computed vectors are
+then transformed following Rupert, Wand, and Carroll (2003), such that
+the spline can be fitted (and penalized) as a mixed-model.
 }
 \section{Decomposition}{
 
-Once a distance function (\eqn{\delta(\cdot, \cdot)}{\delta()}) and
-radii (\eqn{r}) are chosen, define distance matrix,
+Once a basis function (\eqn{\delta(\cdot, \cdot)}{\delta()})
+and radii (\eqn{r}) are chosen, define the matrix,
 \eqn{C_{1, ij} = \delta(r_i, r_j)}{C_1[i, j] = \delta(r_i, r_j)},
 and let,
 
-\deqn{C_0 = [1^{(n \times 1)}, r]}{C_0 = [1, r]}
+\deqn{C_0 = [1_L, r]}{C_0 = [1, r]}
 \deqn{C_1 = Q R}{C_1 = Q * R}
 \deqn{M_1 = Q_{-(1:2)}}{M_1 = Q[-(1:2)]}
 \deqn{K_1 = C_1 M_1 (M_1^T C_1 M_1)^{-\frac{1}{2}}}{K_1 = C_1 * M_1 * (M_1' * C_1 * M_1)^-0.5}
 
 where \eqn{A_{-j}}{A[-j]} denotes a matrix \eqn{A} with column(s) \eqn{j}
-removed. Then distributed lag effects of interest are scaled by the
-matrix \eqn{\Omega = [C_0, K_1]}{\Omega = [C_0, K_1]}
+removed. Then the (scaled) distributed lag effects are
+\eqn{\beta = C_0 \alpha + K_1 b}{\beta = C_0 * \alpha + K_1 * b}, where
+\eqn{b_\ell \sim \mathrm{N}(0, \sigma^2_b)}{b_l ~ N(0, \sigma^2_b)},
+for \eqn{\ell = 1, \ldots, L - 2}{l = 1, ..., L - 2}.
 }
 
 \references{

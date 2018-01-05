@@ -45,10 +45,10 @@ functions and details}
 \item{...}{Additional parameters passed to \code{lme4::\link[lme4]{lFormula}}}
 }
 \value{
-An S4 object that inherits from \code{\link{dlMod}} and
-\code{lme4::\link[lme4]{merMod}} containing the results of the fitted model.
-Many standard model summary methods are available for these object
-types
+An S4 object that inherits from \code{\link{dlMod}} (and
+\code{lme4::\link[lme4]{merMod}}, by extension) containing the
+results of the fitted model. Many standard model summary methods are
+available for these object types
 }
 \description{
 Fit distributed lag models using \pkg{lme4} to penalize smooth terms.
