@@ -122,11 +122,19 @@ fit0 <- dlm(y ~ cr(lag, Conc))
 ```
 
 We begin by computing, for each participant, the radial distance to each
-environmental feature. We follow our prior work and count the total number
+environmental feature. In the `count.features()` function above, `xy` should
+be a 2-element (*x*, *y*) vector for a single subject location, `feature.xy`
+is a 2-column matrix of feature locations (following the `feat.xy` variable
+above), and `radii` is a vector of desired radii to measure and count
+features between.
+We follow our prior work and count the total number
 of features at each available distance on the (50 x 50) grid. In general,
 we advocate an analysis strategy of starting simple and gradually allowing
 for more complexity, so we fit an initial model with only one DL function
-of distance and number of fast-food locations.
+of distance and number of fast-food locations. A DL term can be included
+in model formulas with the `cr()` function which constructs a cubic radial
+smoothing spline basis for the lag radii. Then we use the `dlm()` function
+to fit the model like any other regression in R.
 
 ```R
 > summary(fit0)
@@ -154,17 +162,15 @@ Correlation of Fixed Effects:
 ```
 
 
-<img src="fit0_resids.png" alt="fit0 diagnostics" width="600" height="268">
+<img src="fit0_resids.png" alt="fit0 diagnostics" width="800" height="244">
 
 _Quick residual diagnostics for the model with only one DL function.
 There appears to be a non-constant variance pattern, and age is clearly
 correlated with the residuals from this fit._
 
 ```R
+## Examine residuals plot
 qplot(fitted(fit0), residuals(fit0)) +
-  geom_hline(yintercept = 0, col = "gray40")
-
-qplot(age, residuals(fit0)) +
   geom_hline(yintercept = 0, col = "gray40")
 ```
 
@@ -174,6 +180,8 @@ mostly for easy interpretation of fixed effects covariates. Here, it's a
 little more informative to explore model summaries graphically.
 `dlmBE` uses the `ggplot2` package for its default plotting methods, so
 we continue in that vein for exploratory and diagnostic data visualization.
+
+The residual plots above
 
 
 ```R
