@@ -12,7 +12,7 @@ example, this type of model might be applied when a researcher wants to learn:
  - (Epidemiology) the relationship between health outcomes and proximity of
    subjects to certain environmental features
  - (Cognitive Neuroscience) the shape of the blood-oxygen response
-   in the time folling some sort of stimulus in functional MR images of the
+   in the time following some sort of stimulus in functional MR images of the
    brain
  - ...
 
@@ -101,9 +101,8 @@ Our implementation in the `dlmBE` package relies on the excellent `lme4`
 package to penalize the spline terms using mixed effects modeling and
 provide numerically stable results, even for large numbers of radii.
 
-We begin by computing, for each participant, the radial distance to each
-environmental feature. We follow our prior work and count the total number
-of features at each available distance on the (50 x 50) grid.
+
+## Fitting and understanding DL models
 
 ```R
 count.features <- function(xy, feature.xy, radii) {
@@ -117,13 +116,67 @@ lag <- 1:50  # each available radius
 ## count of features for each subject (row) and radius (column)
 Conc <- t(apply(subj.xy, 1, count.features,
                 feature.xy = feat.xy, radii = c(0, lag)))
+
+## basic model--only DL term
+fit0 <- dlm(y ~ cr(lag, Conc))
+```
+
+We begin by computing, for each participant, the radial distance to each
+environmental feature. We follow our prior work and count the total number
+of features at each available distance on the (50 x 50) grid. In general,
+we advocate an analysis strategy of starting simple and gradually allowing
+for more complexity, so we fit an initial model with only one DL function
+of distance and number of fast-food locations.
+
+```R
+> summary(fit0)
+Linear mixed model fit by REML ['dlMod']
+Formula: y ~ cr(lag, Conc)
+
+REML criterion at convergence: 936.7
+
+Scaled residuals:
+     Min       1Q   Median       3Q      Max
+-2.85065 -0.68897  0.00298  0.78527  2.26968
+
+Random effects:
+ Groups        Name   Variance  Std.Dev.
+ cr(lag, Conc) (mean) 1.013e-08 0.0001007
+ Residual             5.584e+00 2.3630757
+Number of obs: 200, groups:  cr(lag, Conc), 48
+
+Fixed effects:
+            Estimate Std. Error t value
+(Intercept)   24.069      6.731   3.576
+
+Correlation of Fixed Effects:
+<0 x 0 matrix>
 ```
 
 
-```R
-## basic model--only DL term
-fit0 <- dlm(y ~ cr(lag, Conc))
+<img src="fit0_resids.png" alt="fit0 diagnostics" width="600" height="268">
 
+_Quick residual diagnostics for the model with only one DL function.
+There appears to be a non-constant variance pattern, and age is clearly
+correlated with the residuals from this fit._
+
+```R
+qplot(fitted(fit0), residuals(fit0)) +
+  geom_hline(yintercept = 0, col = "gray40")
+
+qplot(age, residuals(fit0)) +
+  geom_hline(yintercept = 0, col = "gray40")
+```
+
+Standard `summary()` methods are available for `dlmBE::dlMod` objects
+(the output type of the `dlm()` function), but the printout is designed
+mostly for easy interpretation of fixed effects covariates. Here, it's a
+little more informative to explore model summaries graphically.
+`dlmBE` uses the `ggplot2` package for its default plotting methods, so
+we continue in that vein for exploratory and diagnostic data visualization.
+
+
+```R
 ## Model including a function of age
 fit1 <- dlm(y ~ c.age + I(c.age^2) + cr(lag, Conc))
 
@@ -131,8 +184,6 @@ fit1 <- dlm(y ~ c.age + I(c.age^2) + cr(lag, Conc))
 fit2 <- dlm(y ~ c.age + I(c.age^2) + cr(lag, Conc) * female)
 ```
 
-
-## Fitting and understanding DL models
 
 ```R
 > anova(fit0, fit1, fit2)
