@@ -1,8 +1,9 @@
 
 # An Introduction to the 'dlmBE' package
 
-<img src="BE.png" alt="Built environment" width="100" height="100">
-*Simulated* features of the built environment. Each cube represents the
+<img src="BE.png" alt="Built environment" width="300" height="211">
+
+_Simulated_ features of the built environment. Each cube represents the
 location(s) of environment features; each orange dot represents a participant
 location.
 
