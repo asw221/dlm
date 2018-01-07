@@ -16,7 +16,7 @@ example, this type of model might be applied when a researcher wants to learn:
    brain
  - ...
 
-And many more. For the purposes of this walkthrough, we will focus on just
+And many more. For the purposes of this walk-through, we will focus on just
 one type of example from our own past research: health outcomes and
 subjects' proximity to features of the built environment
 (Baek, J, *et al*, 2016, 2017).
@@ -90,7 +90,7 @@ may lead us to a few reasonable guesses. The DLM framework provides an
 alternative solution to this type of problem when the analyst is comfortable
 making the extra assumption that the underlying function of distance is
 continuous, or approximately so. In this example, DLMs free the user from
-the responsability of selecting a single radius or distance-threshold.
+the responsibility of selecting a single radius or distance-threshold.
 Instead, the analyst can input many radii and rely on the DLM to infer
 the shape of a continuous function that links them all.
 
@@ -165,8 +165,9 @@ Correlation of Fixed Effects:
 <img src="fit0_resids.png" alt="fit0 diagnostics" width="800" height="244">
 
 _Quick residual diagnostics for the model with only one DL function.
-There appears to be a non-constant variance pattern, and age is clearly
-correlated with the residuals from this fit._
+There appears to be a non-constant variance pattern, and age and gender
+are clearly correlated with the residuals from this fit. The code below
+produces the plot on the left._
 
 ```R
 ## Examine residuals plot
@@ -181,8 +182,16 @@ little more informative to explore model summaries graphically.
 `dlmBE` uses the `ggplot2` package for its default plotting methods, so
 we continue in that vein for exploratory and diagnostic data visualization.
 
-The residual plots above
-
+The residual plots above suggest a few problems with the fit of this simple
+model. At minimum, it appears we should also be controlling for effects
+of age and gender in this analysis. In particular, it looks like the relationship
+between age and BMI may be quadratic (since these data are synthetic, we know
+this is not actually the correct generating function, but here it provides
+a reasonable approximation). For exploratory purposes, we'll compare the fits
+of two additional models: one including a quadratic function of age
+(we'll create the variable `c.age`, which is mean-centered), and the other
+building further to allow the function of distance to be different for
+men and women in our sample.
 
 ```R
 ## Model including a function of age
@@ -192,6 +201,10 @@ fit1 <- dlm(y ~ c.age + I(c.age^2) + cr(lag, Conc))
 fit2 <- dlm(y ~ c.age + I(c.age^2) + cr(lag, Conc) * female)
 ```
 
+Since the models are all nested, we can conveniently compare the fits of each
+against one another using the `anova()` function (inherited from `lme4`; note
+the automatic conversion to maximum-likelihood). The output of this analysis
+suggests that the fit of the third model, `fit2`, is
 
 ```R
 > anova(fit0, fit1, fit2)
