@@ -10,21 +10,23 @@ learn about the shape of that distance-profiled response function. For
 example, this type of model might be applied when a researcher wants to learn:
 
  - (Epidemiology) the relationship between health outcomes and proximity of
-   subjects to certain environmental features.
+   subjects to certain environmental features
  - (Cognitive Neuroscience) the shape of the blood-oxygen response
    in the time folling some sort of stimulus in functional MR images of the
-   brain.
+   brain
  - ...
 
 And many more. For the purposes of this walkthrough, we will focus on just
 one type of example from our own past research: health outcomes and
 subjects' proximity to features of the built environment
-(Baek, J *et al.* 2016, 2017).
+(Baek, J, *et al*, 2016, 2017).
 
 We simulate data on a (50 x 50) grid representing an imaginary cityscape.
 Within our city we simulate a number of built environment features with a
 mild spatial correlation, and *N* = 200 subjects with homes distributed
-uniformly over our plot of land.
+uniformly over our plot of land. We have data in the form of (*x*, *y*)
+coordinate pairs for each subject and environmental feature, and descriptive
+information about the gender and age of each subject.
 
 
 <img src="BE.png" alt="Built environment" width="400" height="281">
@@ -32,12 +34,6 @@ uniformly over our plot of land.
 _Simulated features of the built environment. Each cube represents the
 location(s) of environment features; each orange dot represents a participant
 location._
-
-
-<img src="BE_circ.png" alt="Built environment" width="400" height="281">
-
-_Same environment as above Radii are 4, 8, 12, and 16 units._
-
 
 ```R
 ## (x, y) positions for subjects
@@ -59,15 +55,59 @@ _Same environment as above Radii are 4, 8, 12, and 16 units._
 4 31 1
 5 37 1
 6 38 1
+
+> table(female)
+female
+  0   1
+ 99 101
+
+> summary(age)
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
+  18.00   32.00   47.00   46.56   61.00   75.00
 ```
 
+We're interested in the case where the features we've built into our cityscape
+have some average measurable impact on participant outcomes, but this impact
+changes as a function of distance. Imagine each "feature" is, say, a fast-food
+restaurant and we want to learn about what kind of effect living near this
+type of convenience has on subjects' body-mass index (BMI). One analytical
+approach could be to count how many restaurants are within a given radial
+distance of each subject's home and include that count in a regression model
+as a predictor of our outcome (BMI; `y`).
+
+
+<img src="BE_circ.png" alt="Built environment" width="400" height="281">
+
+_Same environment as above, but focused on the first participant in our
+data set and the number of features within some units of her home. Radii shown
+are 4, 8, 12, and 16 units._
+
+
+In practice, we probably don't often know the appropriate radius to pick for
+this type of problem (or if different sub-populations react differently over
+different radii, etc.) although extant literature or domain-specific knowledge
+may lead us to a few reasonable guesses. The DLM framework provides an
+alternative solution to this type of problem when the analyst is comfortable
+making the extra assumption that the underlying function of distance is
+continuous, or approximately so. In this example, DLMs free the user from
+the responsability of selecting a single radius or distance-threshold.
+Instead, the analyst can input many radii and rely on the DLM to infer
+the shape of a continuous function that links them all.
+
+Although there are multiple different options to allow users to estimate
+arbitrary functions of distance, we focus on the use of splines as a
+flexible and interpretable semi-parametric method.
+Our implementation in the `dlmBE` package relies on the excellent `lme4`
+package to penalize the spline terms using mixed effects modeling and
+provide numerically stable results, even for large numbers of radii.
+
 We begin by computing, for each participant, the radial distance to each
-environmental feature. We follow the literature and count the total number
+environmental feature. We follow our prior work and count the total number
 of features at each available distance on the (50 x 50) grid.
 
 ```R
 count.features <- function(xy, feature.xy, radii) {
-  .dist <- function(x) sqrt(sum(x^2))
+  .dist <- function(x) sqrt(sum(x^2))  # Euclidean distance
   dxy <- apply(sweep(feature.xy, 2, xy), 1, .dist)
   table(cut(dxy, radii, include.lowest = TRUE))
 }
@@ -77,7 +117,10 @@ lag <- 1:50  # each available radius
 ## count of features for each subject (row) and radius (column)
 Conc <- t(apply(subj.xy, 1, count.features,
                 feature.xy = feat.xy, radii = c(0, lag)))
+```
 
+
+```R
 ## basic model--only DL term
 fit0 <- dlm(y ~ cr(lag, Conc))
 
