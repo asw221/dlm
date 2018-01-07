@@ -1,10 +1,11 @@
 
 # An Introduction to the 'dlmBE' package
 
-![Simulated built environment features](BE.png)
-Caption: Simulated features of the built environment. Each cube represents the
+<img src="BE.png" alt="Built environment" style="width: 200px;"/>
+*Simulated features of the built environment. Each cube represents the
 location(s) of environment features; each orange dot represents a participant
-location.
+location.*
+
 
 
 ## Fitting and understanding DL models
