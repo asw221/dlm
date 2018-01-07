@@ -16,3 +16,6 @@ tmp
 
 # R specific
 .Rhistory
+
+# vignette codes
+vignette/*.R
