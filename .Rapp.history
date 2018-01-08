@@ -1,0 +1,360 @@
+form <- y ~ age + gender * cr(lag, X) + (1 + time | subject)
+cr
+library (dlm)
+L <- 50
+1:L / (1.1 * L)
+n <- 100  # n subjects#
+ni <- 10  # ni observations per subject#
+L <- 50#
+#
+age <- rpois(n, 55)#
+male <- rbinom(n, 0.5)#
+lag <- seq(0, 1, length.out = L)#
+#
+X <- sapply(1:L / (1.1 * L), rpois, n = n)
+male <- rbinom(n, 1, 0.5)#
+lag <- seq(0, 1, length.out = L)#
+#
+X <- sapply(1:L / (1.1 * L), rpois, n = n)
+image(X)
+colMeans(X)
+rbeta(1, 1, 99)
+X <- sapply(1:L / (1.1 * L), function(p) rpois(n, rbeta(1, p*n, (1 - p)*n)))
+colMeans(X)
+image(X)
+u <- 0.05 * matrix(rnorm(2*n), ncol = 2) %*% chol(matrix(c(1, 0.2, 0.2, 1), 2))
+dim(u)
+cor(u)
+cov(u)
+apply(u, 2, sd)
+head(u)
+b <- rnorm(L + 4, c(0.65, -0.5, 0.6, 0.1 * lag <= 0.5), 0.05)
+length(b)
+b
+dim(cbind(t(b), u))
+dim(data.frame(t(b), u))
+(data.frame(t(b), u))[1:10, ]
+b <- rnorm(L + 4, c(0.65, -0.5, 0.6, 0.1, 0.1 * lag <= 0.5), 0.05)#
+u <- 0.05 * matrix(rnorm(2*n), ncol = 2) %*% chol(matrix(c(1, 0.2, 0.2, 1), 2))
+(data.frame(t(b), u))[1, ]
+0.1 * lag <= 0.5
+0.1 * (lag <= 0.5)
+b <- rnorm(L + 4, c(0.65, -0.5, 0.6, 0.1, 0.1 * (lag <= 0.5)), 0.05)#
+u <- 0.05 * matrix(rnorm(2*n), ncol = 2) %*% chol(matrix(c(1, 0.2, 0.2, 1), 2))
+(data.frame(t(b), u))[1, ]
+KhatriRao(Diagonal(2), cbind(1, rnorm(4)))
+Ji <- as(factor(rep(1:3, each = 4)), "sparseMatrix")
+Ji
+Xi <- cbind(1, rnorm(4))
+Xi
+Z <- t(KhatriRao(t(Ji), t(Xi)))
+X <- cbind(1, rep(rnorm(4), 3))
+dim(X)
+dim(Ji)
+Z <- t(KhatriRao(t(Ji), t(Xi)))
+Z <- t(KhatriRao(t(Ji), Xi))
+ncol(Y)
+Z <- t(KhatriRao(t(Ji), t(X)))
+Z <- t(KhatriRao(t(Ji), X))
+ncol(X)
+dim(Ji)
+dim(X)
+Z <- t(KhatriRao(Ji, t(X)))
+Z
+Ji <- as(factor(subject), "sparseMatrix")#
+Zt <- rbind(1, 1:ni)
+Zt
+subject <- rep(1:n, each = ni)#
+time <- rep(1:ni, each = n)
+Ji <- as(factor(subject), "sparseMatrix")#
+Zt <- rbind(1, time)
+dim(Zt)
+dim(Ji)
+dim(KhatriRao(Ji, Zt))
+image(KhatriRao(Ji, Zt))
+n <- 100  # n subjects#
+ni <- 10  # ni observations per subject#
+L <- 50#
+#
+subject <- rep(1:n, each = ni)#
+time <- rep(1:ni, each = n)#
+age <- rpois(n, 55)#
+male <- rbinom(n, 1, 0.5)#
+lag <- seq(0, 1, length.out = L)#
+#
+C <- sapply(1:L / (1.1 * L), function(p) rpois(n, rbeta(1, p*n, (1 - p)*n)))#
+#
+b <- rnorm(L + 4, c(0.65, -0.5, 0.6, 0.1, 0.1 * (lag <= 0.5)), 0.05)#
+u <- 0.05 * matrix(rnorm(2*n), ncol = 2) %*% chol(matrix(c(1, 0.2, 0.2, 1), 2))#
+Ji <- as(factor(subject), "sparseMatrix")#
+Zt <- rbind(1, time)#
+#
+X <- cbind(1, age[subject], male[subject], time, C[subject, ], t(KhatriRao(Ji, Zt)))
+dim(X)
+class(X)
+image(X)
+plot(1)
+image(X)
+X[1:20, 1:8]
+C <- as(sapply(1:L / (1.1 * L), function(p) rpois(n, rbeta(1, p*n, (1 - p)*n))),#
+        "sparseMatrix")
+dim(C)
+image(C)
+time
+subject
+subject <- rep(1:n, each = ni)#
+time <- rep(1:ni, n)#
+age <- rpois(n, 55)#
+male <- rbinom(n, 1, 0.5)#
+lag <- seq(0, 1, length.out = L)#
+#
+C <- as(sapply(1:L / (1.1 * L), function(p) rpois(n, rbeta(1, p*n, (1 - p)*n))),#
+        "sparseMatrix")#
+#
+b <- rnorm(L + 4, c(0.65, -0.5, 0.6, 0.1, 0.1 * (lag <= 0.5)), 0.05)#
+u <- 0.05 * matrix(rnorm(2*n), ncol = 2) %*% chol(matrix(c(1, 0.2, 0.2, 1), 2))#
+Ji <- as(factor(subject), "sparseMatrix")#
+Zt <- rbind(1, time)#
+#
+X <- cbind(1, age[subject], male[subject], time, C[subject, ], t(KhatriRao(Ji, Zt)))
+dim(X)
+image(X)
+X[1:20, 1:8]
+X[1, ]
+X[1:5, ]
+B <- c(b, c(t(u)))
+length(B)
+y <- rnorm(n * ni, as.matrix(X %*% B), 0.85)
+summary(y)
+b <- rnorm(L + 4, c(2, -0.5, 0.6, 0.1, 0.1 * (lag <= 0.5)), 0.05)#
+u <- 0.05 * matrix(rnorm(2*n), ncol = 2) %*% chol(matrix(c(1, 0.2, 0.2, 1), 2))#
+Ji <- as(factor(subject), "sparseMatrix")#
+Zt <- rbind(1, time)#
+#
+X <- cbind(1, age[subject], male[subject], time, C[subject, ], t(KhatriRao(Ji, Zt)))#
+B <- c(b, c(t(u)))#
+#
+y <- rnorm(n * ni, as.matrix(X %*% B), 0.85)
+summary(y)
+b <- rnorm(L + 4, c(6, -0.5, 0.6, 0.1, 0.1 * (lag <= 0.5)), 0.05)#
+u <- 0.05 * matrix(rnorm(2*n), ncol = 2) %*% chol(matrix(c(1, 0.2, 0.2, 1), 2))#
+Ji <- as(factor(subject), "sparseMatrix")#
+Zt <- rbind(1, time)#
+#
+X <- cbind(1, age[subject], male[subject], time, C[subject, ], t(KhatriRao(Ji, Zt)))#
+B <- c(b, c(t(u)))#
+#
+y <- rnorm(n * ni, as.matrix(X %*% B), 0.85)
+summary(y)
+b <- rnorm(L + 4, c(-1, -0.5, 0.6, 0.1, 0.1 * (lag <= 0.5)), 0.05)#
+u <- 0.05 * matrix(rnorm(2*n), ncol = 2) %*% chol(matrix(c(1, 0.2, 0.2, 1), 2))#
+Ji <- as(factor(subject), "sparseMatrix")#
+Zt <- rbind(1, time)#
+#
+X <- cbind(1, age[subject], male[subject], time, C[subject, ], t(KhatriRao(Ji, Zt)))#
+B <- c(b, c(t(u)))#
+#
+y <- rnorm(n * ni, as.matrix(X %*% B), 0.85)
+summary(y)
+b <- rnorm(L + 4, c(-0.8, -0.5, 0.6, 0.1, 0.1 * (lag <= 0.5)), 0.05)#
+u <- 0.05 * matrix(rnorm(2*n), ncol = 2) %*% chol(matrix(c(1, 0.2, 0.2, 1), 2))#
+Ji <- as(factor(subject), "sparseMatrix")#
+Zt <- rbind(1, time)#
+#
+X <- cbind(1, age[subject], male[subject], time, C[subject, ], t(KhatriRao(Ji, Zt)))#
+B <- c(b, c(t(u)))#
+#
+y <- rnorm(n * ni, as.matrix(X %*% B), 0.85)
+summary(y)
+fit0 <- lmer(y ~ age + male + time + cr(lag, C) + (1 + time | subject))
+age <- age[subject]#
+male <- male[subject]#
+#
+fit0 <- lmer(y ~ age + male + time + cr(lag, C) + (1 + time | subject))
+fit0 <- lmer(y ~ age + male + time + cr(lag, C[subject, ]) + (1 + time | subject))
+summary(fit0)
+form <- y ~ age + male + time + cr(lag, C[subject, ]) + (1 + time | subject)
+terms.formula(form)
+F <- model.frame(form)
+apply(F, class)
+sapply(F, inherits, "SmoothLag")
+fit0 <- lmer(y ~ time + age + male * cr(lag, C[subject, ]) + (1 + time | subject))
+summary(fit0)
+terms.formula(form)
+dim(X)
+q()
+library (dlm)
+help(interpret.dlm)
+help(is.matrix)
+help(interpret.dlm)
+help(is.matrix)
+new("SmoothLag")
+new("dlMod")
+is.dMatrix
+is(1, "dMatrix")
+is(Diagonal(2), "dMatrix")
+is
+help(isLMM)
+help(interpret.dlm)
+q()
+library (dlm)
+help(interpret.dlm)
+help(dlm)
+SmoothLag()
+q()
+library (dlm)
+help(LagBasis)
+help(basis)
+q()
+ls()
+ls(all = TRUE)
+library (dlm)
+help(basis)
+help(lm)
+as.function("boob")
+as.function("rbind")
+q()
+library (dlm)
+help(cr)
+data(simdata)
+x <- seq(0.1, 10, length.out = 100)
+Z <- simdata[, -(1:3)]
+dim(Z)
+cr(x, Z)
+crb <- cr(x, Z)
+slotNames(crb)
+image(omega(crb))
+image(omega(crb@basis))
+crb@signature
+#' @describeIn smoothing natural cubic radial basis spline#
+cr <- function(x, Z, ...) {#
+  .Ignored(...)#
+  val <- sm(x, Z)#
+  val@signature <- deparse(sys.call())#
+  val#
+}#
+## cr
+crb <- cr(x, Z)
+#' @describeIn smoothing natural cubic radial basis spline#
+cr <- function(x, Z, ...) {#
+  #.Ignored(...)#
+  val <- sm(x, Z)#
+  val@signature <- deparse(sys.call())#
+  val#
+}#
+## cr
+crb <- cr(x, Z)
+crb@signature
+q()
+help(lm)
+help(glm)
+library (lme4)
+help(lFormula)
+help(lFormual)
+help(lFormula)
+help(lmerContorl)
+help(lmerControl)
+help(merMod)
+help(glm)
+gaussian(link = "identity")
+help(coefficients)
+help(coef.mer)
+q()
+library (dlm)
+help(confint)
+help(vcoef0)
+??vcoef0
+help(estimands)
+library (dlm)
+help(vcoef)
+??vcoef
+help(estimands)
+help(vcoef0)
+library (dlm)
+help(vcoef0)
+help(estimands)
+library (dlm)
+help(vcoef)
+help(estimands)
+help(confint.dlMod)
+help(confint)
+library(dlm)
+help(vcoef)
+class(Diagonal(5))
+D <- Diagonal(5)
+D[3:5, 3:5] <- rnorm(9)
+D
+class(D)
+help(dgCMatrix)
+??dgCMatrix
+help(dgCMatrix-class)
+help(sparseMatrix)
+help(dgcMatrix)
+help(dgCMatrix)
+help(dsCMatrix)
+help(dtCMatrix)
+help(CsparseMatrix)
+help(sparseMatrix)
+help(dlm)
+help(confint)
+help(coef.merMod)
+help(dlm)
+data (simdata)#
+#
+## Setup distance count matrix and corresponding lag distances#
+X <- as.matrix(simdata[, -(1:3)])#
+lag <- seq(0.1, 10, length.out = ncol(X))#
+#
+fit <- dlm(Y ~ Age + Gender + cr(lag, X), data = simdata)#
+summary (fit)
+coef(fit, FALSE)
+confint(fit, scaled = FALSE)
+changePoint(fit)
+changePoint(fit, scaled = FALSE)
+plot(fit)
+plot(fit, scaled = FALSE)
+plot(fit, scaled = FALSE, geom = "line")
+plot(fit, geom = "line")
+confint(fit)
+confint(fit, scaled = TRUE)
+lagIndex(fit)
+lagIndex(fit, .fixed = FALSE)
+vcoef(fit)[lagIndex(fit)[[1]]]
+library(dlm)
+help(Sigma)
+getws()
+getwd()
+setwd("Dropbox/software/dlm")
+source("../../R/tools.R")
+ls()
+build.manual("dlm")
+help(smoothing)
+help(cr)
+help(sm)
+## load simulated data set and extract concentration matrix#
+data (simdata)#
+Conc <- simdata[, -(1:3)]  # First columns are Y, Age, and Gender#
+#
+## radial lag (distance) each concentration was measured at#
+x <- seq(0.1, 10, length.out = ncol(Conc))#
+crb <- cr(x, Conc)
+dim(omega(crb))
+f <- function(x, y = 2)
+if (missing(y)) cat("BOO!\n")
+f(1)
+help(plotDlm)
+help(makeDlMod)
+lg <- 1:5Z <- matrix(rbinom(60, 10, 0.1), 12)group <- rep(1:4, each = 3)base <- "cr(lg, Z)"names <- colnames(model.matrix(~ cr(lg, Z):factor(group)))pn <- parse.names(base, names, FALSE)namespnpn[""]
+pn["cr(lg, Z):factor(group)1"]
+pn["cr(lg, Z):factor(group)2"]
+324/4
+help(expand.grid)
+install.packages("ggforce")
+data(simdata)
+lag <- seq(0.1, 10, length.out = 100)
+Z <- simdata[, -(1:3)]
+crb <- cr(lag, Z)
+omega(crb)[1:10, 1:10]
+omega(crb@basis)[1:10, 1:10]
+omega(cr(lag, Z, scale = 1)@basis)[1:10, 1:10]
+q()

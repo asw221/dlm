@@ -188,14 +188,14 @@ of age and gender in this analysis. In particular, it looks like the relationshi
 between age and BMI may be quadratic (since these data are synthetic, we know
 this is not actually the correct generating function, but here it provides
 a reasonable approximation). For exploratory purposes, we'll compare the fits
-of two additional models: one including a quadratic function of age
+of two additional models: one including gender and a quadratic function of age
 (we'll create the variable `c.age`, which is mean-centered), and the other
 building further to allow the function of distance to be different for
 men and women in our sample.
 
 ```R
-## Model including a function of age
-fit1 <- dlm(y ~ c.age + I(c.age^2) + cr(lag, Conc))
+## Model including a function of age and gender
+fit1 <- dlm(y ~ c.age + I(c.age^2) + female + cr(lag, Conc))
 
 ## Model including interaction between DL term and gender
 fit2 <- dlm(y ~ c.age + I(c.age^2) + cr(lag, Conc) * female)
@@ -203,8 +203,7 @@ fit2 <- dlm(y ~ c.age + I(c.age^2) + cr(lag, Conc) * female)
 
 Since the models are all nested, we can conveniently compare the fits of each
 against one another using the `anova()` function (inherited from `lme4`; note
-the automatic conversion to maximum-likelihood). The output of this analysis
-suggests that the fit of the third model, `fit2`, is
+the automatic conversion to maximum-likelihood).
 
 ```R
 > anova(fit0, fit1, fit2)
@@ -212,15 +211,20 @@ refitting model(s) with ML (instead of REML)
 Data: NULL
 Models:
 fit0: y ~ cr(lag, Conc)
-fit1: y ~ c.age + I(c.age^2) + cr(lag, Conc)
+fit1: y ~ c.age + I(c.age^2) + female + cr(lag, Conc)
 fit2: y ~ c.age + I(c.age^2) + cr(lag, Conc) * female
      Df    AIC    BIC  logLik deviance   Chisq Chi Df Pr(>Chisq)
 fit0  5 923.08 939.57 -456.54   913.08
-fit1  7 896.68 919.77 -441.34   882.68  30.391      2  2.516e-07 ***
-fit2 11 618.79 655.07 -298.39   596.79 285.897      4  < 2.2e-16 ***
+fit1  8 678.46 704.85 -331.23   662.46 250.613      3  < 2.2e-16 ***
+fit2 11 618.79 655.07 -298.39   596.79  65.675      3  3.597e-14 ***
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ```
+
+The fairly dramatic jumps in the likelihood statistics indicate substantial
+improvements in the fit of each model, moving from `fit0` $\to$ `fit1`
+$\to$ `fit2`.
+
 
 ## References
 Baek J, Sanchez BN, Berrocal VJ, & Sanchez-Vaznaugh EV (2016) Epidemiology
