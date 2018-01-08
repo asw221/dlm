@@ -270,7 +270,7 @@ age that tapers off for older age groups.
 
 Not losing sight of our primary goal,
 before we finish with this example, let's summarize the fitted DL functions
-and check how they stack up against true ones (there were in fact different
+and check how they stack up against the true ones (there were in fact different
 response functions for men and women in this simulation).
 `dlmBE` provides a few convenient utilities to extract and visualize estimated
 DL functions in a fitted model. For visualization, the basic syntax is simply
