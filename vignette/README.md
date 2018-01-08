@@ -223,7 +223,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
 The fairly dramatic jumps in the likelihood statistics indicate substantial
 improvements in the fit of each model, moving from `fit0` $\to$ `fit1`
-$\to$ `fit2`.
+<p>&rarr;</p> `fit2`.
 
 
 ## References
