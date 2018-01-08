@@ -298,7 +298,7 @@ plot(fit2, geom = "line") +
 
 The model estimates mild effects of dwelling proximity to fast-food on BMI;
 based on 95% confidence intervals (the default), these effects may go to zero
-after about 20 distance units in men, and maybe 5--10 distance units in women.
+after about 20 distance units in men, and maybe 5-10 distance units in women.
 The exact points where the confidence intervals are about to cross the zero
 line can be extracted with the `changePoint()` utility. Finally, we also show
 how to compute confidence intervals using the familiar `confint()`, and extract
