@@ -268,7 +268,8 @@ in this sample, and that they respond differently to proximity to fast-food
 restaurants. There also appears to be a strong effect of BMI increasing with
 age that tapers off for older age groups.
 
-Before we finish with this example, let's summarize the fitted DL functions
+Not losing sight of our primary goal,
+before we finish with this example, let's summarize the fitted DL functions
 and check how they stack up against true ones (there were in fact different
 response functions for men and women in this simulation).
 `dlmBE` provides a few convenient utilities to extract and visualize estimated
@@ -276,14 +277,6 @@ DL functions in a fitted model. For visualization, the basic syntax is simply
 `plot(fit2)`, but the call below enriches the plot with the addition of the true
 DL functions in purple (note the use of a "`term`" factor in the data for these
 functions to get them to render properly on the plot facets).
-
-```R
-plot(fit2, geom = "line") +
-  geom_step(aes(x, y),
-    data = data.frame(x = lag, y = c(theta1, theta2 - theta1),
-      term = rep(names(fit2@index), each = length(lag))),
-    color = "darkorchid")
-```
 
 <img src="fit2.png" alt="fit2 DL functions" width="600" height="300">
 
@@ -296,6 +289,23 @@ the smoothing splines do a reasonable job of recovering approximately correct
 shapes._
 
 ```R
+plot(fit2, geom = "line") +
+  geom_step(aes(x, y),
+    data = data.frame(x = lag, y = c(theta1, theta2 - theta1),
+      term = rep(names(fit2@index), each = length(lag))),
+    color = "darkorchid")
+```
+
+The model estimates mild effects of dwelling proximity to fast-food on BMI;
+based on 95% confidence intervals (the default), these effects may go to zero
+after about 20 distance units in men, and maybe 5--10 distance units in women.
+The exact points where the confidence intervals are about to cross the zero
+line can be extracted with the `changePoint()` utility. Finally, we also show
+how to compute confidence intervals using the familiar `confint()`, and extract
+DL term-specific parameters using combinations of the `lagIndex()`, `vcoef()`,
+and `Sigma()` methods.
+
+```R
 > changePoint(fit2)
 $`cr(lag, Conc)`
 cr(lag, Conc)22
@@ -304,10 +314,7 @@ cr(lag, Conc)22
 $`cr(lag, Conc):female`
  cr(lag, Conc):female4 cr(lag, Conc):female19
                      4                     19
-```
 
-
-```R
 > confint(fit2)
                                 coef          2.5%         97.5%
 (Intercept)             2.535949e+01  17.267419810  3.345156e+01
@@ -321,16 +328,16 @@ cr(lag, Conc)2:female   5.155791e-02   0.017206960  8.590887e-02
 cr(lag, Conc)3          2.578794e-02   0.006160107  4.541578e-02
 cr(lag, Conc)4          2.602213e-02   0.007979825  4.406444e-02
 ...
-```
 
-```R
-lg.ind <- lagIndex(fit2)  # integer index list for DL coefs
-vcoef(fit2)[lg.ind[[1]]]  # term 1 lag coefs
-## cr(lag, Conc)1  cr(lag, Conc)2  cr(lag, Conc)3  cr(lag, Conc)4  cr(lag, Conc)5
-##   2.534196e-02    2.556467e-02    2.578794e-02    2.602213e-02    2.627490e-02
+> lg.ind <- lagIndex(fit2)  # integer index list for DL coefs
+> vcoef(fit2)[lg.ind[[1]]]  # term 1 lag coefs
+ cr(lag, Conc)1  cr(lag, Conc)2  cr(lag, Conc)3  cr(lag, Conc)4  cr(lag, Conc)5
+   2.534196e-02    2.556467e-02    2.578794e-02    2.602213e-02    2.627490e-02
+...
 
-sqrt(diag(Sigma(fit2)[lg.ind[[1]], lg.ind[[1]]])) # SE's of term1 lag coefs
-## [1] 0.012179942 0.011008437 0.010014386 0.009205428 0.008578863
+> sqrt(diag(Sigma(fit2)[lg.ind[[1]], lg.ind[[1]]])) # SE's of term1 DL coefs
+ [1] 0.012179942 0.011008437 0.010014386 0.009205428 0.008578863
+...
 ```
 
 

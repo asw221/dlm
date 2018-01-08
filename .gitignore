@@ -16,6 +16,7 @@ tmp
 
 # R specific
 .Rhistory
+.Rapp.history
 
 # vignette codes
 vignette/*.R
