@@ -285,17 +285,53 @@ plot(fit2, geom = "line") +
     color = "darkorchid")
 ```
 
-<img src="fit2.png" alt="fit2 DL functions" width="500" height="250">
+<img src="fit2.png" alt="fit2 DL functions" width="600" height="300">
 
 _Estimated distributed lag functions for the model_ `fit2`_. Given the model
 specification, the plot on the left shows the response in expected BMI at each
 radial distance for men, and the plot on the right shows the effect for
 women_ minus _the effect for men (since the terms are additive). Although
 the true DL functions are discontinuous step functions in this example,
-the smoothing splines do a reasonable job of recovering the correct function
-shape._
+the smoothing splines do a reasonable job of recovering approximately correct
+shapes._
+
+```R
+> changePoint(fit2)
+$`cr(lag, Conc)`
+cr(lag, Conc)22
+             22
+
+$`cr(lag, Conc):female`
+ cr(lag, Conc):female4 cr(lag, Conc):female19
+                     4                     19
+```
 
 
+```R
+> confint(fit2)
+                                coef          2.5%         97.5%
+(Intercept)             2.535949e+01  17.267419810  3.345156e+01
+c.age                   4.023355e-02   0.031781470  4.868563e-02
+I(c.age^2)             -2.718213e-03  -0.003290942 -2.145484e-03
+cr(lag, Conc)1          2.534196e-02   0.001469709  4.921420e-02
+cr(lag, Conc)2          2.556467e-02   0.003988527  4.714081e-02
+female                 -9.406013e-01 -12.004814066  1.012361e+01
+cr(lag, Conc)1:female   6.147205e-02   0.021652154  1.012920e-01
+cr(lag, Conc)2:female   5.155791e-02   0.017206960  8.590887e-02
+cr(lag, Conc)3          2.578794e-02   0.006160107  4.541578e-02
+cr(lag, Conc)4          2.602213e-02   0.007979825  4.406444e-02
+...
+```
+
+```R
+lg.ind <- lagIndex(fit2)  # integer index list for DL coefs
+vcoef(fit2)[lg.ind[[1]]]  # term 1 lag coefs
+## cr(lag, Conc)1  cr(lag, Conc)2  cr(lag, Conc)3  cr(lag, Conc)4  cr(lag, Conc)5
+##   2.534196e-02    2.556467e-02    2.578794e-02    2.602213e-02    2.627490e-02
+
+sqrt(diag(Sigma(fit2)[lg.ind[[1]], lg.ind[[1]]])) # SE's of term1 lag coefs
+## [1] 0.012179942 0.011008437 0.010014386 0.009205428 0.008578863
+```
 
 
 
