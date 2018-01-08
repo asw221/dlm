@@ -222,9 +222,59 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ```
 
 The fairly dramatic jumps in the likelihood statistics indicate substantial
-improvements in the fit of each model, moving from `fit0` $\to$ `fit1`
-&rarr; `fit2`.
+improvements in the fit of each model, moving from `fit0` &rarr; `fit1`
+&rarr; `fit2`. We also compared `fit0` \& `fit1` with a model that included
+a `cr(lag, Conc) * c.age` term (instead of `cr(lag, Conc) * female`; not shown),
+and found that this did not significantly improve the likelihood over `fit1`.
+In addition, residual diagnostics (also not shown) do not indicate any major
+problems with `fit2`, building further confidence in this model.
+Given these results, we proceed to draw inference from `fit2` (which at this
+point is very close to the data generating model).
 
+```R
+> summary(fit2)
+Linear mixed model fit by REML ['dlMod']
+Formula: y ~ c.age + I(c.age^2) + cr(lag, Conc) * female
+
+REML criterion at convergence: 643.5
+
+Scaled residuals:
+    Min      1Q  Median      3Q     Max
+-2.7007 -0.6195  0.0142  0.5842  2.6054
+
+Random effects:
+ Groups               Name   Variance  Std.Dev.
+ cr(lag, Conc)        (mean) 3.590e-08 0.0001895
+ cr(lag, Conc):female (mean) 2.739e-07 0.0005234
+ Residual                    9.034e-01 0.9504623
+Number of obs: 200, groups:  cr(lag, Conc), 48; cr(lag, Conc):female, 48
+
+Fixed effects:
+              Estimate Std. Error t value
+(Intercept) 25.3594917  4.1286840   6.142
+c.age        0.0402336  0.0043124   9.330
+I(c.age^2)  -0.0027182  0.0002922  -9.302
+female      -0.9406013  5.6451103  -0.167
+
+Correlation of Fixed Effects:
+           (Intr) c.age  I(.^2)
+c.age       0.051
+I(c.age^2) -0.099  0.043
+female     -0.727 -0.024  0.066
+```
+
+This model suggests that, on average, women have slightly lower BMI than men
+in this sample, and that they respond differently to proximity to fast-food
+restaurants. There also appears to be a strong effect of BMI increasing with
+age that tapers off for older age groups.
+
+Before we finish with this example, let's summarize the fitted DL functions
+and check how they stack up against true ones (there were in fact different
+response functions for men and women in this simulation).
+`dlmBE` provides a few convenient utilities to extract and visualize estimated
+DL functions in a fitted model.
+
+<img src="fit2.png" alt="fit2 DL functions" width="500" height="250">
 
 ## References
 Baek J, Sanchez BN, Berrocal VJ, & Sanchez-Vaznaugh EV (2016) Epidemiology
