@@ -272,9 +272,21 @@ Before we finish with this example, let's summarize the fitted DL functions
 and check how they stack up against true ones (there were in fact different
 response functions for men and women in this simulation).
 `dlmBE` provides a few convenient utilities to extract and visualize estimated
-DL functions in a fitted model.
+DL functions in a fitted model. The basic syntax is simply `plot(fit2)`, but
+the call below enriches the plot with the addition of the true DL functions
+in purple (note the use of a "`term`" factor in the data for these functions
+to get them to render properly on the plot facets).
+
+```R
+plot(fit2, geom = "line") +
+  geom_step(aes(x, y),
+    data = data.frame(x = lag, y = c(theta1, theta2 - theta1),
+      term = rep(names(fit2@index), each = length(lag))),
+    color = "darkorchid")
+```
 
 <img src="fit2.png" alt="fit2 DL functions" width="500" height="250">
+
 
 ## References
 Baek J, Sanchez BN, Berrocal VJ, & Sanchez-Vaznaugh EV (2016) Epidemiology
