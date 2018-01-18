@@ -73,7 +73,7 @@ interpret.dlm <- function(formula, data,
   lag <- logical(NROW(mtf))  ## which terms in data are lag terms
   bases <- list()
   for (j in 1:NROW(mtf))  if (lag[j] <- inherits(data[[j]], "SmoothLag")) {
-    mf.lag[[j]] <- mf.lag[[j]]@random
+    mf.lag[[j]] <- mf.lag[[j]]@random[attr(data, "na.action"), ]
     bases[[j]] <- data[[j]]@basis
     data[[j]] <- data[[j]]@.Data
   }

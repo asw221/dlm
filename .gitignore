@@ -20,3 +20,4 @@ tmp
 
 # vignette codes
 vignette/*.R
+vignette/.RData
