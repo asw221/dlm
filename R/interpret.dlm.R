@@ -70,10 +70,12 @@ interpret.dlm <- function(formula, data,
   ## but replace the "main effects" components of smooth DL terms with
   ## their "random effects" basis sets
   mf.lag <- data
+  na.act <- na.action(data)
   lag <- logical(NROW(mtf))  ## which terms in data are lag terms
   bases <- list()
   for (j in 1:NROW(mtf))  if (lag[j] <- inherits(data[[j]], "SmoothLag")) {
-    mf.lag[[j]] <- mf.lag[[j]]@random[-attr(data, "na.action"), ]
+    mf.lag[[j]] <- if (!is.null(na.act)) mf.lag[[j]]@random[-na.act, ]
+      else mf.lag[[j]]@random
     bases[[j]] <- data[[j]]@basis
     data[[j]] <- data[[j]]@.Data
   }

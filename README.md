@@ -3,9 +3,9 @@
 
 The goal of this package is to provide researchers with a convenient interface
 to fit and summarize distributed lag models (DLMs) using the R programming
-language. Among so many modeling strategies in the toolbox, users might reach
-for DLMs when they have an outcome that is related to distance-profiled
-predictors through some unknown function. A typical goal could then be to
+language. DLMs are useful when users want to model an outcome that is related to
+distance-profiled predictors through some unknown function.
+A typical goal could then be to
 learn about the shape of that distance-profiled response function. For
 example, this type of model might be applied when a researcher wants to learn:
 
@@ -104,7 +104,25 @@ provide numerically stable results, even for large numbers of radii.
 
 ## Fitting and understanding DL models
 
+We begin by computing, for each participant, the radial distance to each
+environmental feature. In the `count.features()` function above, `xy` should
+be a 2-element (*x*, *y*) vector for a single subject location, `feature.xy`
+is a 2-column matrix of feature locations (following the `feat.xy` variable
+above), and `radii` is a vector of desired radii to measure and count
+features between.
+We follow our prior work and count the total number
+of features at each available distance on the (50 x 50) grid. In general,
+we advocate an analysis strategy of starting simple and gradually allowing
+for more complexity, so we fit an initial model with only one DL function
+of distance and number of fast-food locations. A DL term can be included
+in model formulas with the `cr()` function which constructs a cubic radial
+smoothing spline basis for the lag radii. Then we use the `dlm()` function
+to fit the model like any other regression in R.
+
 ```R
+## count.features - a function to count the number of features between radii
+## centered on a subject's location, xy. Feature locations should be given
+## in matrix form in feature.xy
 count.features <- function(xy, feature.xy, radii) {
   .dist <- function(x) sqrt(sum(x^2))  # Euclidean distance
   dxy <- apply(sweep(feature.xy, 2, xy), 1, .dist)
@@ -121,20 +139,7 @@ Conc <- t(apply(subj.xy, 1, count.features,
 fit0 <- dlm(y ~ cr(lag, Conc))
 ```
 
-We begin by computing, for each participant, the radial distance to each
-environmental feature. In the `count.features()` function above, `xy` should
-be a 2-element (*x*, *y*) vector for a single subject location, `feature.xy`
-is a 2-column matrix of feature locations (following the `feat.xy` variable
-above), and `radii` is a vector of desired radii to measure and count
-features between.
-We follow our prior work and count the total number
-of features at each available distance on the (50 x 50) grid. In general,
-we advocate an analysis strategy of starting simple and gradually allowing
-for more complexity, so we fit an initial model with only one DL function
-of distance and number of fast-food locations. A DL term can be included
-in model formulas with the `cr()` function which constructs a cubic radial
-smoothing spline basis for the lag radii. Then we use the `dlm()` function
-to fit the model like any other regression in R.
+
 
 ```R
 > summary(fit0)
@@ -161,6 +166,12 @@ Correlation of Fixed Effects:
 <0 x 0 matrix>
 ```
 
+Standard `summary()` methods are available for **`dlmBE::dlMod`** objects
+(the output type of the `dlm()` function), but the printout is designed
+mostly for easy interpretation of fixed effects covariates. Here, it's a
+little more informative to explore model summaries graphically.
+`dlmBE` uses the `ggplot2` package for its default plotting methods, so
+we continue in that vein for exploratory and diagnostic data visualization.
 
 <img src="vignette/fit0_resids.png" alt="fit0 diagnostics" width="800" height="244">
 
@@ -175,12 +186,6 @@ qplot(fitted(fit0), residuals(fit0)) +
   geom_hline(yintercept = 0, col = "gray40")
 ```
 
-Standard `summary()` methods are available for `dlmBE::dlMod` objects
-(the output type of the `dlm()` function), but the printout is designed
-mostly for easy interpretation of fixed effects covariates. Here, it's a
-little more informative to explore model summaries graphically.
-`dlmBE` uses the `ggplot2` package for its default plotting methods, so
-we continue in that vein for exploratory and diagnostic data visualization.
 
 The residual plots above suggest a few problems with the fit of this simple
 model. At minimum, it appears we should also be controlling for effects
