@@ -138,8 +138,8 @@ of features at each available distance on the (50 x 50) grid. In general,
 we advocate an analysis strategy of starting simple and gradually allowing
 for more complexity, so we fit an initial model with only one DL function
 of distance and number of fast-food locations. A DL term can be included
-in model formulas with the `cr()` function which constructs a cubic radial
-smoothing spline basis for the lag radii. Then we use the `dlm()` function
+in model formulas with the **`cr()`** function which constructs a cubic radial
+smoothing spline basis for the lag radii. Then we use the **`dlm()`** function
 to fit the model like any other regression in R.
 
 ```R
@@ -167,8 +167,8 @@ Correlation of Fixed Effects:
 <0 x 0 matrix>
 ```
 
-Standard `summary()` methods are available for **`dlmBE::dlMod`** objects
-(the output type of the `dlm()` function), but the printout is designed
+Standard `summary()` methods are available for **`dlMod`** objects
+(the output type of the **`dlm()`** function), but the printout is designed
 mostly for easy interpretation of fixed effects covariates. Here, it's a
 little more informative to explore model summaries graphically.
 `dlmBE` uses the `ggplot2` package for its default plotting methods, so
@@ -306,10 +306,11 @@ The model estimates mild effects of dwelling proximity to fast-food on BMI;
 based on 95% confidence intervals (the default), these effects may go to zero
 after about 20 distance units in men, and maybe 5-10 distance units in women.
 The exact points where the confidence intervals are about to cross the zero
-line can be extracted with the `changePoint()` utility. Finally, we also show
+line can be extracted with the **`changePoint()`** utility. Finally, we also show
 how to compute confidence intervals using the familiar `confint()`, and extract
-DL term-specific parameters using combinations of the `lagIndex()`, `vcoef()`,
-and `Sigma()` methods.
+DL term-specific parameters using combinations of the **`lagIndex()`**,
+**`vcoef()`**,
+and **`Sigma()`** methods.
 
 ```R
 > changePoint(fit2)
