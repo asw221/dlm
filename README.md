@@ -14,7 +14,8 @@ example, this type of model might be applied when a researcher wants to learn:
  - (Cognitive Neuroscience) the shape of the blood-oxygen response
    in the time following some sort of stimulus in functional MR images of the
    brain
- - ...
+ - (Genetics) the probability of gene expression or presence as a function of
+   neighboring gene expression/presence
 
 And many more. For the purposes of this walk-through, we will focus on just
 one type of example from our own past research: health outcomes and
@@ -104,20 +105,7 @@ provide numerically stable results, even for large numbers of radii.
 
 ## Fitting and understanding DL models
 
-We begin by computing, for each participant, the radial distance to each
-environmental feature. In the `count.features()` function above, `xy` should
-be a 2-element (*x*, *y*) vector for a single subject location, `feature.xy`
-is a 2-column matrix of feature locations (following the `feat.xy` variable
-above), and `radii` is a vector of desired radii to measure and count
-features between.
-We follow our prior work and count the total number
-of features at each available distance on the (50 x 50) grid. In general,
-we advocate an analysis strategy of starting simple and gradually allowing
-for more complexity, so we fit an initial model with only one DL function
-of distance and number of fast-food locations. A DL term can be included
-in model formulas with the `cr()` function which constructs a cubic radial
-smoothing spline basis for the lag radii. Then we use the `dlm()` function
-to fit the model like any other regression in R.
+Analysis of this type of data may proceed as follows:
 
 ```R
 ## count.features - a function to count the number of features between radii
@@ -139,7 +127,20 @@ Conc <- t(apply(subj.xy, 1, count.features,
 fit0 <- dlm(y ~ cr(lag, Conc))
 ```
 
-
+We begin by computing, for each participant, the radial distance to each
+environmental feature. In the `count.features()` function above, `xy` should
+be a 2-element (*x*, *y*) vector for a single subject location, `feature.xy`
+is a 2-column matrix of feature locations (following the `feat.xy` variable
+above), and `radii` is a vector of desired radii to measure and count
+features between.
+We follow our prior work and count the total number
+of features at each available distance on the (50 x 50) grid. In general,
+we advocate an analysis strategy of starting simple and gradually allowing
+for more complexity, so we fit an initial model with only one DL function
+of distance and number of fast-food locations. A DL term can be included
+in model formulas with the `cr()` function which constructs a cubic radial
+smoothing spline basis for the lag radii. Then we use the `dlm()` function
+to fit the model like any other regression in R.
 
 ```R
 > summary(fit0)
