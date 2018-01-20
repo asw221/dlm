@@ -5,15 +5,15 @@
 
 ### Installation
 
-To install the development version of the **`dlmBE`** package from GitHub,
-we recommend running the following in (version 3.0 or higher),
+To install the development version of the `dlmBE` package from GitHub,
+we recommend running the following in R (version 3.0 or higher),
 
 ```R
 library (devtools)
 install_github("Biostatistics4SocialImpact/dlm", dependencies = TRUE)
 ```
 
----
+## Package Overview
 
 The goal of this package is to provide researchers with a convenient interface
 to fit and summarize distributed lag models (DLMs) using the R programming
