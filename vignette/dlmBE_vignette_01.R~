@@ -1,0 +1,210 @@
+
+library (ggplot2)
+library (ggforce)
+library (gridExtra)
+library (Matrix)
+library (splines)
+library (dlmBE)
+
+set.seed(5696)
+out.dir <- file.path(.dropbox, "software", "dlm", "vignette")
+
+
+## Simulate built environment feature counts
+## -------------------------------------------------------------------
+n.loc <- 50
+loc <- 1:n.loc
+sigma.x <- 1
+mu.x <- log(0.2) - 0.5 * sigma.x^2
+phi <- 8 / 3
+
+xy <- expand.grid(x = loc, y = loc)
+
+Sigma.L <- exp(-(0.99 / phi) * as.matrix(dist(xy))) + 0.1 * Diagonal(nrow(xy))
+Sigma.L <- t(as(chol(Sigma.L), "sparseMatrix"))
+
+Mu <- exp(c(mu.x + as.matrix(Sigma.L %*% rnorm(nrow(xy)))))
+ct <- rpois(nrow(xy), Mu)
+
+## (data.frame(xy, count = ct)) %>%
+##   ggplot(aes(x, y)) +
+##   geom_raster(aes(fill = count)) +
+##   labs(x = "", y = "", fill = "# Features")
+
+
+## Simulate subject locations
+## -------------------------------------------------------------------
+
+N <- 200
+subj.xy <- xy[sample.int(nrow(xy), N, replace = TRUE), ]
+
+
+## Plot BE feature counts
+## -------------------------------------------------------------------
+
+dev.new(height = 3.3, width = 4.7, units = "in")
+
+subset(data.frame(xy, count = ct), count > 0) %>%
+  ggplot(aes(x, y)) +
+  geom_point(aes(alpha = count), shape = 15) +
+  geom_point(data = subj.xy, size = rel(1), color = "darkorange") +
+  labs(x = "", y = "", alpha = "# Features") +
+  scale_alpha(range = c(0.35, 1)) +
+  theme_void() +
+  theme(# panel.border = element_rect(fill = NA, color = "gray40", size = rel(1)),
+        panel.background = element_rect(fill = "gray90")
+        )
+
+ggsave (file.path(out.dir, "BE.png"))
+
+
+
+circ <- data.frame(x = subj.xy[1, 1], y = subj.xy[1, 2], r = seq(4, 20, 4))
+
+subset(data.frame(xy, count = ct), count > 0) %>%
+  ggplot() +
+  geom_circle(aes(x0 = x, y0 = y, r = r),
+              data = circ[-nrow(circ), ],
+              fill = "gray50", alpha = 1/4, color = NA) +
+  geom_point(aes(x, y, alpha = count), shape = 15) +
+  geom_point(aes(x, y),
+             data = subj.xy[1, ], size = rel(2), color = "darkorange") +
+  scale_alpha(range = c(0.35, 1)) +
+  labs(x = "", y = "", alpha = "# Features") +
+  xlim(1, 50) +
+  ylim(1, 50) +
+  theme_void() +
+  theme(# panel.border = element_rect(fill = NA, color = "gray40", size = rel(1)),
+        panel.background = element_rect(fill = "gray90")
+        )
+
+ggsave (file.path(out.dir, "BE_circ.png"))
+
+
+## Organize data
+## -------------------------------------------------------------------
+
+feat.xy <- as.matrix(xy[rep(1:length(ct), ct), ])
+subj.xy <- as.matrix(subj.xy)
+rownames (feat.xy) <- rownames (subj.xy) <- NULL
+
+
+count.features <- function(xy, feature.xy, radii) {
+  .dist <- function(x) sqrt(sum(x^2))
+  dxy <- apply(sweep(feature.xy, 2, xy), 1, .dist)
+  table(cut(dxy, radii, include.lowest = TRUE))
+}
+
+lag <- 1:50
+Conc <- t(apply(subj.xy, 1, count.features,
+                feature.xy = feat.xy, radii = c(0, lag))
+          )
+
+crb1 <- cr(lag, Conc)
+
+
+## Simulate BMI
+## -------------------------------------------------------------------
+
+rescl <- function(x) x / max(x, na.rm = TRUE)
+
+age <- sample(18:80, N, replace = TRUE,
+              prob = (18:80 <= 60) + (18:80 > 60) * rescl(dnorm(18:80, 61, 9))
+              )
+c.age <- age - mean(age)
+female <- rbinom(N, 1, 0.5)
+
+## Based on norms from Wiki, no gender differences in BMI
+## but age has this sort of elongated inverted U
+X <- cbind(1, bs(c.age, knots = c(25, 28, 40, 65) - mean(age)))
+b <- c(25.8, -0.6, -0.8, 1.2, 2.8, 2, 2, 1)
+## plot(age, X %*% b)
+
+
+kern1 <- as.numeric(lag <= 20)
+theta1 <- kern1 / 40
+
+kern2 <- as.numeric(lag <= 6)
+theta2 <- kern2 / 15
+
+mu <- X %*% b + (Conc * (1 - female)) %*% theta1 + (Conc * female) %*% theta2 - 1
+y <- rnorm(N, mu, 0.8)  ## BMI -- sd in the range 0.8 - 2.5 could make sense
+
+
+## Analysis
+## -------------------------------------------------------------------
+
+fit0 <- dlm(y ~ cr(lag, Conc))
+fit1 <- dlm(y ~ c.age + I(c.age^2) + female + cr(lag, Conc))
+fit2 <- dlm(y ~ c.age + I(c.age^2) + cr(lag, Conc) * female)
+fit3 <- dlm(y ~ c.age + I(c.age^2) + female + cr(lag, Conc) * c.age)
+
+## plot(fit1, geom = "line") +
+##   geom_step(aes(x, y), data = data.frame(x = lag, y = theta),
+##              color = "darkorchid")
+
+
+r1 <- qplot(fitted(fit0), residuals(fit0)) +
+  geom_hline(yintercept = 0, col = "gray40")
+
+r2 <- qplot(age, residuals(fit0)) +
+  geom_hline(yintercept = 0, col = "gray40")
+
+r3 <- data.frame(female, residuals = residuals(fit0)) %>%
+  ggplot(aes(female, residuals)) +
+  geom_point(position = position_jitter(width = 0.1)) +
+  scale_x_continuous(breaks = 0:1, labels = c("Male", "Female")) +
+  labs(x = "gender", y = "residuals(fit0)") +
+  geom_hline(yintercept = 0, color = "gray40")
+
+
+png(file.path(out.dir, "fit0_resids.png"),
+    units = "in", height = 2.5, width = 8.2, res = 150)
+grid.arrange(r1, r2, r3, nrow = 1)
+dev.off()
+rm (r1, r2, r3)
+
+
+
+
+
+dev.new(units = "in", height = 2.6, width = 5.2)
+
+plot(fit2, geom = "line") +
+  geom_step(aes(x, y),
+    data = data.frame(x = lag, y = c(theta1, theta2 - theta1),
+      term = rep(names(fit2@index), each = length(lag))),
+    color = "darkorchid")
+
+ggsave (file.path(out.dir, "fit2.png"))
+
+
+
+
+
+## Fit the model using MC Stan
+## -------------------------------------------------------------------
+
+library (dlmBE)
+library (rstan)
+
+load (file.path(out.dir, ".RData"))
+setwd (out.dir)
+
+X <- cbind(model.matrix(fit2), as.matrix(t(lme4::getME(fit2, "Zt"))))
+
+data.stan <- list(
+  N = nrow(y), P = ncol(X),
+  P_cr = length(lag) - 2,
+  P_crfem = length(lag) - 2,
+  y = y,
+  X = X
+  )
+
+rm (X)
+
+
+fit2.stan <- stan(file = "fit2.stan", data = data.stan,
+                  iter = 2000, chains = 2,
+                  pars = c("theta", "sigma", "sigma_cr", "sigma_crfem")
+                  )

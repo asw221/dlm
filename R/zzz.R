@@ -69,7 +69,10 @@
 #' The package includes a series of functions to pass formulas and data to
 #' \pkg{lme4}, which is used for estimation of the DLM. All those functions are
 #' documented in this manual, although a typical user will primarily interact
-#' with XXX, xxx, and xxx. For example:
+#' with function \code{\link{dlm}}, the \code{\link{estimands}} utilities, and
+#' our \link[=plotDlm]{visualization} tools. For a worked example of \pkg{dlmBE}
+#' usage, see our online
+#' \href{https://github.com/Biostatistics4SocialImpact/dlm}{vignette}.
 #'
 #'
 #' @docType package

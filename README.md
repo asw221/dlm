@@ -9,6 +9,8 @@ To install the development version of the `dlmBE` package from GitHub,
 we recommend running the following in R (version 3.0 or higher),
 
 ```R
+if (!suppressWarnings (library(devtools, logical = TRUE)))
+  install.packages ("devtools")
 library (devtools)
 install_github("Biostatistics4SocialImpact/dlm", dependencies = TRUE)
 ```
@@ -18,7 +20,7 @@ install_github("Biostatistics4SocialImpact/dlm", dependencies = TRUE)
 The goal of this package is to provide researchers with a convenient interface
 to fit and summarize distributed lag models (DLMs) using the R programming
 language. DLMs are useful when users want to model an outcome that is related to
-distance-profiled predictors through some unknown function.
+distance-profiled predictors through some unknown smooth function.
 A typical goal could then be to
 learn about the shape of that distance-profiled response function. For
 example, this type of model might be applied when a researcher wants to learn:
@@ -46,9 +48,9 @@ information about the gender and age of each subject.
 
 <img src="vignette/BE.png" alt="Built environment" width="400" height="281">
 
-_Simulated features of the built environment. Each cube represents the
-location(s) of environment features; each orange dot represents a participant
-location._
+_Simulated features of the built environment. Each gray cube represents the
+location(s) of one or more environment features. Each orange dot
+represents a participant location._
 
 ```R
 ## (x, y) positions for subjects
@@ -70,6 +72,15 @@ location._
 4 31 1
 5 37 1
 6 38 1
+
+> head(data.frame(y, female, age))
+         y female age
+1 31.95842      1  46
+2 24.91282      0  65
+3 30.95102      1  55
+4 33.12025      0  64
+5 32.72775      1  26
+6 27.27995      1  30
 
 > table(female)
 female
@@ -112,14 +123,28 @@ the shape of a continuous function that links them all.
 Although there are multiple different options to allow users to estimate
 arbitrary functions of distance, we focus on the use of splines as a
 flexible and interpretable semi-parametric method.
-Our implementation in the `dlmBE` package relies on the excellent `lme4`
+Our implementation in the `dlmBE` package relies on the `lme4`
 package to penalize the spline terms using mixed effects modeling and
 provide numerically stable results, even for large numbers of radii.
 
 
-## Fitting and understanding DL models
+## Fitting and interpreting DL models
 
-Analysis of this type of data may proceed as follows:
+Analysis of this type of data may proceed as follows. 
+We begin by computing, for each participant, the radial distance to each
+environmental feature. In the `count.features()` function below, `xy` should
+be a 2-element (*x*, *y*) vector for a single subject location, `feature.xy`
+is a 2-column matrix of feature locations (following the `feat.xy` variable
+above), and `radii` is a vector of desired radii to measure and count
+features between.
+We follow our prior work and count the total number
+of features at each available distance on the (50 x 50) grid. In general,
+we advocate an analysis strategy of starting simple and gradually allowing
+for more complexity, so we fit an initial model with only one DL function
+of distance and number of fast-food locations. A DL term can be included
+in model formulas with the **`cr()`** function which constructs a cubic radial
+smoothing spline basis for the lag radii. Then we use the **`dlm()`** function
+to fit the model like any other regression in R.
 
 ```R
 ## count.features - a function to count the number of features between radii
@@ -136,25 +161,27 @@ lag <- 1:50  # each available radius
 ## count of features for each subject (row) and radius (column)
 Conc <- t(apply(subj.xy, 1, count.features,
                 feature.xy = feat.xy, radii = c(0, lag)))
+				
+## > Conc[1:10, 1:5]
+##       [0,1] (1,2] (2,3] (3,4] (4,5]
+##  [1,]     0     0     4     4     8
+##  [2,]     0     1     3     3    11
+##  [3,]     1     0     2     9     7
+##  [4,]     1     1     0     1     4
+##  [5,]     1     2     9     5    13
+##  [6,]     0     1     0     1     5
+##  [7,]     0     3     0     2     6
+##  [8,]     1     0     0     1     6
+##  [9,]     0     1     2     4     9
+## [10,]     0     3     3     3     6
 
 ## basic model--only DL term
 fit0 <- dlm(y ~ cr(lag, Conc))
 ```
 
-We begin by computing, for each participant, the radial distance to each
-environmental feature. In the `count.features()` function above, `xy` should
-be a 2-element (*x*, *y*) vector for a single subject location, `feature.xy`
-is a 2-column matrix of feature locations (following the `feat.xy` variable
-above), and `radii` is a vector of desired radii to measure and count
-features between.
-We follow our prior work and count the total number
-of features at each available distance on the (50 x 50) grid. In general,
-we advocate an analysis strategy of starting simple and gradually allowing
-for more complexity, so we fit an initial model with only one DL function
-of distance and number of fast-food locations. A DL term can be included
-in model formulas with the **`cr()`** function which constructs a cubic radial
-smoothing spline basis for the lag radii. Then we use the **`dlm()`** function
-to fit the model like any other regression in R.
+Standard `summary()` methods are available for **`dlMod`** objects
+(the output type of the **`dlm()`** function), but the printout is designed
+mostly for easy interpretation of fixed effects covariates. 
 
 ```R
 > summary(fit0)
@@ -181,12 +208,16 @@ Correlation of Fixed Effects:
 <0 x 0 matrix>
 ```
 
-Standard `summary()` methods are available for **`dlMod`** objects
-(the output type of the **`dlm()`** function), but the printout is designed
-mostly for easy interpretation of fixed effects covariates. Here, it's a
-little more informative to explore model summaries graphically.
+It's more informative, however, to explore model summaries graphically.
 `dlmBE` uses the `ggplot2` package for its default plotting methods, so
-we continue in that vein for exploratory and diagnostic data visualization.
+we continue in that vein for exploratory and diagnostic data
+visualization.
+
+```R
+## Examine residuals plot
+qplot(fitted(fit0), residuals(fit0)) +
+  geom_hline(yintercept = 0, col = "gray40")
+```
 
 <img src="vignette/fit0_resids.png" alt="fit0 diagnostics" width="800" height="244">
 
@@ -195,11 +226,6 @@ There appears to be a non-constant variance pattern, and age and gender
 are clearly correlated with the residuals from this fit. The code below
 produces the plot on the left._
 
-```R
-## Examine residuals plot
-qplot(fitted(fit0), residuals(fit0)) +
-  geom_hline(yintercept = 0, col = "gray40")
-```
 
 
 The residual plots above suggest a few problems with the fit of this simple
@@ -293,7 +319,7 @@ before we finish with this example, let's summarize the fitted DL functions
 and check how they stack up against the true ones (there were in fact different
 response functions for men and women in this simulation).
 `dlmBE` provides a few convenient utilities to extract and visualize estimated
-DL functions in a fitted model. For visualization, the basic syntax is simply
+DL coefficients in a fitted model. For visualization, the basic syntax is simply
 `plot(fit2)`, but the call below enriches the plot with the addition of the true
 DL functions in purple (note the use of a "`term`" factor in the data for these
 functions to get them to render properly on the plot facets).
