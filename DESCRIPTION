@@ -1,7 +1,7 @@
 Package: dlmBE
 Version: 0.1
 Date: 2018-1-15
-title: Distributed Lag Models for built environment applications
+Title: Distributed Lag Models for built environment applications
 Description: This package fits distributed lag models (DLMs) to describe
   how the association between the presence of built environment features
   and an outcome varies as a function of distance between locations for
