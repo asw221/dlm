@@ -46,7 +46,8 @@ coordinate pairs for each subject and environmental feature, and descriptive
 information about the gender and age of each subject.
 
 
-<img src="vignette/BE.png" alt="Built environment" width="400" height="281">
+<p align="center"><img src="vignette/BE.png" alt="Built environment"
+width="400" height="281"></p> 
 
 _Simulated features of the built environment. Each gray cube represents the
 location(s) of one or more environment features. Each orange dot
@@ -102,7 +103,8 @@ distance of each subject's home and include that count in a regression model
 as a predictor of our outcome (BMI; `y`).
 
 
-<img src="vignette/BE_circ.png" alt="Built environment" width="400" height="281">
+<p align="center"><img src="vignette/BE_circ.png" alt="Built
+environment" width="400" height="281"></p> 
 
 _Same environment as above, but focused on the first participant in our
 data set and the number of features within some units of her home. Radii shown
@@ -223,7 +225,7 @@ qplot(fitted(fit0), residuals(fit0)) +
 
 _Quick residual diagnostics for the model with only one DL function.
 There appears to be a non-constant variance pattern, and age and gender
-are clearly correlated with the residuals from this fit. The code below
+are clearly correlated with the residuals from this fit. The code above
 produces the plot on the left._
 
 
@@ -324,6 +326,14 @@ DL coefficients in a fitted model. For visualization, the basic syntax is simply
 DL functions in purple (note the use of a "`term`" factor in the data for these
 functions to get them to render properly on the plot facets).
 
+```R
+plot(fit2, geom = "line") +
+  geom_step(aes(x, y),
+    data = data.frame(x = lag, y = c(theta1, theta2 - theta1),
+      term = rep(names(fit2@index), each = length(lag))),
+    color = "darkorchid")
+```
+
 <img src="vignette/fit2.png" alt="fit2 DL functions" width="600" height="300">
 
 _Estimated distributed lag functions for the model_ `fit2`_. Given the model
@@ -334,13 +344,6 @@ the true DL functions are discontinuous step functions in this example,
 the smoothing splines do a reasonable job of recovering approximately correct
 shapes._
 
-```R
-plot(fit2, geom = "line") +
-  geom_step(aes(x, y),
-    data = data.frame(x = lag, y = c(theta1, theta2 - theta1),
-      term = rep(names(fit2@index), each = length(lag))),
-    color = "darkorchid")
-```
 
 The model estimates mild effects of dwelling proximity to fast-food on BMI;
 based on 95% confidence intervals (the default), these effects may go to zero
