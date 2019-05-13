@@ -221,7 +221,7 @@ qplot(fitted(fit0), residuals(fit0)) +
   geom_hline(yintercept = 0, col = "gray40")
 ```
 
-<img src="vignette/fit0_resids.png" alt="fit0 diagnostics" width="800" height="244">
+<p align="center"><img src="vignette/fit0_resids.png" alt="fit0 diagnostics" width="800" height="244"></p>
 
 _Quick residual diagnostics for the model with only one DL function.
 There appears to be a non-constant variance pattern, and age and gender
@@ -334,7 +334,7 @@ plot(fit2, geom = "line") +
     color = "darkorchid")
 ```
 
-<img src="vignette/fit2.png" alt="fit2 DL functions" width="600" height="300">
+<p align="center"><img src="vignette/fit2.png" alt="fit2 DL functions" width="600" height="300"></p>
 
 _Estimated distributed lag functions for the model_ `fit2`_. Given the model
 specification, the plot on the left shows the response in expected BMI at each
